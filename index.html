@@ -72,38 +72,43 @@
   .counter .pop.mid{transform:scale(1.14);z-index:2}
 
   /* ---------- Marciano 3D (chupetín de bolsa) ---------- */
-  .pop{width:80px;height:240px;perspective:840px;position:relative;flex:none}
-  .rot{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:sway 7.5s ease-in-out infinite;transform:rotateX(4deg)}
-  .pop.spin .rot{animation:spin 16s linear infinite}
-  @keyframes sway{0%,100%{transform:rotateX(4deg) rotateY(-34deg)}50%{transform:rotateX(4deg) rotateY(34deg)}}
-  @keyframes spin{from{transform:rotateX(5deg) rotateY(0)}to{transform:rotateX(5deg) rotateY(360deg)}}
+  .pop{width:94px;height:248px;perspective:900px;position:relative;flex:none}
+  .rot{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:sway 8s ease-in-out infinite;transform:rotateX(3deg)}
+  .pop.spin .rot{animation:sway 11s ease-in-out infinite}
+  /* giro limitado a 34°: el tubo nunca queda de canto ni la etiqueta se sale de la silueta */
+  @keyframes sway{0%,100%{transform:rotateX(3deg) rotateY(-34deg)}50%{transform:rotateX(3deg) rotateY(34deg)}}
 
-  .lay{position:absolute;top:17px;height:206px;border-radius:9px;background:var(--edge);backface-visibility:hidden}
-  .lay.face{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4), inset 0 -20px 28px rgba(0,0,0,.13)}
-  .gloss{position:absolute;inset:0;border-radius:9px;background:linear-gradient(102deg,rgba(255,255,255,.62) 0 16%,rgba(255,255,255,.05) 38%,rgba(255,255,255,0) 60%)}
+  .lay{position:absolute;top:18px;height:210px;border-radius:11px;background:var(--edge);backface-visibility:hidden}
+  .lay.face{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+  .gloss{position:absolute;left:9%;top:5%;width:16%;height:60%;border-radius:6px;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.04))}
   .speck{position:absolute;border-radius:50%;opacity:.6}
 
   .seal{
-    position:absolute;left:10px;width:60px;height:15px;border-radius:4px;backface-visibility:hidden;
+    position:absolute;left:16px;width:62px;height:15px;border-radius:4px;backface-visibility:hidden;
     background:
-      repeating-linear-gradient(90deg, rgba(61,16,41,.16) 0 1px, transparent 1px 5px),
-      linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.66));
-    box-shadow:0 1px 2px rgba(61,16,41,.18);
+      repeating-linear-gradient(90deg, rgba(61,16,41,.09) 0 1px, transparent 1px 7px),
+      linear-gradient(180deg,rgba(255,255,255,.93),rgba(255,255,255,.66));
+    box-shadow:0 1px 2px rgba(61,16,41,.14);
   }
-  .seal.top{top:2px}
-  .seal.bot{top:221px}
+  .seal.top{top:4px}
+  .seal.bot{top:229px}
 
-  .label{
-    position:absolute;left:27px;top:62px;width:26px;height:82px;border-radius:5px;
-    background:linear-gradient(180deg,#fffdfb,#fff1f5);backface-visibility:hidden;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 1px 4px rgba(61,16,41,.22), inset 0 0 0 1px rgba(61,16,41,.06);
+  .mklabel{
+    position:absolute;left:29px;top:56px;width:36px;height:134px;border-radius:5px;
+    background:linear-gradient(180deg,#fffdfb,#fff0f4);backface-visibility:hidden;overflow:hidden;
+    box-shadow:0 2px 7px rgba(61,16,41,.3), inset 0 0 0 1px rgba(61,16,41,.08);
   }
-  .label .lg{
-    transform:rotate(-90deg);white-space:nowrap;line-height:1;
-    font-family:"Fraunces",serif;font-weight:900;font-size:11px;letter-spacing:-.02em;color:var(--ink);
+  /* nombres propios (.mklabel/.mktext) para no chocar con .lg de la leyenda del mapa */
+  .mklabel .mktext{
+    position:absolute;left:50%;top:50%;width:134px;margin:-8px 0 0 -67px;
+    transform:rotate(-90deg);transform-origin:center;
+    text-align:center;white-space:nowrap;line-height:16px;
+    font-family:"Fraunces",serif;font-weight:900;font-size:14.5px;letter-spacing:-.02em;color:var(--ink);
   }
-  .label .lg em{font-style:italic;color:var(--fresa)}
+  .mklabel .mktext em{font-style:italic;color:var(--fresa)}
+  .mklabel::before,.mklabel::after{content:"";position:absolute;left:6px;right:6px;height:3px;border-radius:2px;background:var(--mango);opacity:.85}
+  .mklabel::before{top:7px}
+  .mklabel::after{bottom:7px}
 
   /* ---------- Secciones ---------- */
   .sec{padding:56px 0}
@@ -543,10 +548,11 @@ const FLAVORS = [
   {n:"Cerveza negra",   p:"2.50", c1:"#c99a5c", c2:"#33200f", e:"#6d4b2a", sp:"#1d1108", a:1}
 ];
 
-/* Sección elíptica del tubo: semieje X = A, semieje Z = B */
-const A = 24, B = 13, LAYERS = 15, ZMAX = 12.4, W = 80;
-const SEAL_Z = [-5, -2.5, 0, 2.5, 5];
-const SPECKS = [[24,14,4.4],[62,22,3.6],[40,58,4],[70,30,3.2],[18,74,3.4]];
+/* Sección elíptica del tubo: semieje X = A (ancho), semieje Z = B (fondo).
+   ZLABEL > ZMAX para que la etiqueta quede IMPRESA encima y no la tapen las rebanadas frontales. */
+const A = 29, B = 19, LAYERS = 17, ZMAX = 18, W = 94, ZLABEL = 19.5;
+const SEAL_Z = [-6, -3, 0, 3, 6];
+const SPECKS = [[22,13,4.6],[64,21,3.8],[38,56,4.2],[72,32,3.4],[16,72,3.6]];
 
 function buildPop(f, opts){
   opts = opts || {};
@@ -570,12 +576,14 @@ function buildPop(f, opts){
     l.style.left = ((W - w) / 2).toFixed(1) + 'px';
     l.style.transform = 'translateZ(' + z.toFixed(2) + 'px)';
     l.style.background = 'linear-gradient(168deg,' + f.c1 + ' 6%,' + f.c2 + ')';
-    l.style.filter = 'brightness(' + (0.70 + 0.36 * ((z / ZMAX) + 1) / 2).toFixed(2) + ')';
+    /* rango amplio de sombreado: centro iluminado y bordes oscuros = volumen cilíndrico */
+    l.style.filter = 'brightness(' + (0.62 + 0.44 * ((z / ZMAX) + 1) / 2).toFixed(2) + ')';
 
-    if(front) l.appendChild(Object.assign(document.createElement('div'), {className:'gloss'}));
+    /* el brillo va en una rebanada ancha, a la izquierda de la etiqueta, donde sí se ve */
+    if(i === LAYERS - 4) l.appendChild(Object.assign(document.createElement('div'), {className:'gloss'}));
 
-    /* trocitos (galleta, pasas, maní, semillas) sobre una rebanada cercana al frente */
-    if(i === LAYERS - 4){
+    /* trocitos (galleta, pasas, maní, semillas) suspendidos cerca del frente */
+    if(i === LAYERS - 5){
       SPECKS.forEach(function(s){
         const d = document.createElement('div');
         d.className = 'speck';
@@ -597,11 +605,11 @@ function buildPop(f, opts){
   });
 
   /* Etiqueta impresa, al frente y al reverso */
-  [[12, 0], [-12, 180]].forEach(function(cfg){
+  [[ZLABEL, 0], [-ZLABEL, 180]].forEach(function(cfg){
     const lb = document.createElement('div');
-    lb.className = 'label';
+    lb.className = 'mklabel';
     lb.style.transform = 'translateZ(' + cfg[0] + 'px) rotateY(' + cfg[1] + 'deg)';
-    lb.innerHTML = '<span class="lg">Chup<em> Fruit</em></span>';
+    lb.innerHTML = '<span class="mktext">Chup<em> Fruit</em></span>';
     rot.appendChild(lb);
   });
 
