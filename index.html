@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHUP Fruit — Chupetes de fruta, 100% felicidad</title>
+<meta name="description" content="Chupetes artesanales de fruta y crema. 100% fruta, 100% felicidad. Delivery en la ciudad. Pide por WhatsApp y paga con Yape.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='28' y='40' width='8' height='22' rx='4' fill='%23c9964b'/%3E%3Cpath d='M10 20a22 22 0 0 1 44 0v20c0 8-10 14-22 14s-22-6-22-14z' fill='%23ef2f68'/%3E%3Cpath d='M10 36c6 4 14 6 22 6s16-2 22-6v4c0 8-10 14-22 14s-22-6-22-14z' fill='%23ffd9e4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,600;1,9..144,900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{
+    --bg:#fff8f3;
+    --card:#ffffff;
+    --ink:#3d1029;
+    --ink-2:#7d5a6d;
+    --fresa:#ef2f68;
+    --mango:#ff9a1f;
+    --uva:#8a3fa8;
+    --line:rgba(61,16,41,.09);
+    --shadow:0 1px 2px rgba(61,16,41,.05), 0 10px 30px -12px rgba(61,16,41,.18);
+    --shadow-lg:0 2px 4px rgba(61,16,41,.05), 0 24px 50px -18px rgba(61,16,41,.28);
+    --wa:#25d366;
+    --max:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(900px 520px at 88% -6%, rgba(255,154,31,.16), transparent 60%),
+      radial-gradient(760px 520px at -6% 8%, rgba(239,47,104,.14), transparent 58%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Manrope",system-ui,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+
+  /* ---------- Nav ---------- */
+  header{position:sticky;top:0;z-index:60;background:rgba(255,248,243,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{font-family:"Fraunces",serif;font-weight:900;font-size:26px;letter-spacing:-.02em;line-height:1}
+  .brand em{font-style:italic;color:var(--fresa)}
+  .nav-links{display:flex;gap:30px;font-weight:600;font-size:15px}
+  .nav-links a{color:var(--ink-2);transition:color .2s}
+  .nav-links a:hover{color:var(--fresa)}
+  @media(max-width:820px){.nav-links{display:none}}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:56px 0 30px}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:center}
+  .kicker{display:inline-flex;align-items:center;gap:9px;font-family:"Fraunces",serif;font-style:italic;font-weight:600;color:var(--mango);font-size:18px;margin-bottom:14px}
+  .kicker::before{content:"";width:26px;height:2px;background:var(--mango);border-radius:2px}
+  h1.logo{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(56px,10vw,108px);line-height:.86;letter-spacing:-.03em}
+  h1.logo .fruit{display:block;font-style:italic;background:linear-gradient(92deg,var(--fresa),var(--mango));-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:-.05em}
+  .lede{font-size:19px;color:var(--ink-2);max-width:42ch;margin:20px 0 28px}
+  .lede b{color:var(--ink);font-weight:700}
+  .trust{display:flex;gap:26px;margin-top:28px;flex-wrap:wrap}
+  .trust strong{display:block;font-family:"Fraunces",serif;font-size:18px}
+  .trust span{font-size:14px;color:var(--ink-2)}
+
+  .counter{
+    position:relative;background:linear-gradient(165deg,#ffffff,#fff1f4);
+    border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow-lg);
+    padding:34px 20px 26px;display:flex;justify-content:center;align-items:flex-end;min-height:430px;
+  }
+  .counter::after{content:"";position:absolute;left:12%;right:12%;bottom:24px;height:16px;border-radius:50%;background:radial-gradient(closest-side,rgba(61,16,41,.16),transparent 75%)}
+  .counter .pop{margin:0 2px}
+  .counter .pop.mid{transform:scale(1.14);z-index:2}
+
+  /* ---------- Marciano 3D (chupetín de bolsa) ---------- */
+  .pop{width:80px;height:240px;perspective:840px;position:relative;flex:none}
+  .rot{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:sway 7.5s ease-in-out infinite;transform:rotateX(4deg)}
+  .pop.spin .rot{animation:spin 16s linear infinite}
+  @keyframes sway{0%,100%{transform:rotateX(4deg) rotateY(-34deg)}50%{transform:rotateX(4deg) rotateY(34deg)}}
+  @keyframes spin{from{transform:rotateX(5deg) rotateY(0)}to{transform:rotateX(5deg) rotateY(360deg)}}
+
+  .lay{position:absolute;top:17px;height:206px;border-radius:9px;background:var(--edge);backface-visibility:hidden}
+  .lay.face{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4), inset 0 -20px 28px rgba(0,0,0,.13)}
+  .gloss{position:absolute;inset:0;border-radius:9px;background:linear-gradient(102deg,rgba(255,255,255,.62) 0 16%,rgba(255,255,255,.05) 38%,rgba(255,255,255,0) 60%)}
+  .speck{position:absolute;border-radius:50%;opacity:.6}
+
+  .seal{
+    position:absolute;left:10px;width:60px;height:15px;border-radius:4px;backface-visibility:hidden;
+    background:
+      repeating-linear-gradient(90deg, rgba(61,16,41,.16) 0 1px, transparent 1px 5px),
+      linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.66));
+    box-shadow:0 1px 2px rgba(61,16,41,.18);
+  }
+  .seal.top{top:2px}
+  .seal.bot{top:221px}
+
+  .label{
+    position:absolute;left:27px;top:62px;width:26px;height:82px;border-radius:5px;
+    background:linear-gradient(180deg,#fffdfb,#fff1f5);backface-visibility:hidden;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 1px 4px rgba(61,16,41,.22), inset 0 0 0 1px rgba(61,16,41,.06);
+  }
+  .label .lg{
+    transform:rotate(-90deg);white-space:nowrap;line-height:1;
+    font-family:"Fraunces",serif;font-weight:900;font-size:11px;letter-spacing:-.02em;color:var(--ink);
+  }
+  .label .lg em{font-style:italic;color:var(--fresa)}
+
+  /* ---------- Secciones ---------- */
+  .sec{padding:56px 0}
+  .sec-head{max-width:620px;margin-bottom:34px}
+  .sec-head h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(32px,5vw,50px);letter-spacing:-.02em;line-height:1.02}
+  .sec-head p{color:var(--ink-2);margin-top:12px;font-size:17px}
+
+  /* ---------- Tarjetas de sabor ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px}
+  .fcard{
+    position:relative;background:var(--card);border:1px solid var(--line);border-radius:26px;
+    padding:24px 20px 20px;box-shadow:var(--shadow);text-align:center;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .fcard:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+  .fcard:hover .rot{animation-duration:2.4s}
+  .fcard .stage{display:flex;justify-content:center;margin-bottom:14px}
+  .fcard h3{font-family:"Fraunces",serif;font-weight:600;font-size:21px;letter-spacing:-.01em}
+  .fcard .price{margin-top:8px;display:inline-block;font-weight:800;font-size:15px;color:var(--fresa);background:#ffeef3;padding:5px 14px;border-radius:999px}
+  .plus{position:absolute;top:16px;right:16px;font-size:11px;font-weight:800;color:#fff;background:var(--uva);padding:3px 9px;border-radius:8px}
+  .note{margin-top:24px;font-size:14px;color:var(--ink-2)}
+  .note b{color:var(--uva)}
+
+  /* ---------- Tarjetas info ---------- */
+  .info-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:start}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:30px;box-shadow:var(--shadow)}
+  .panel h2{font-family:"Fraunces",serif;font-weight:900;font-size:29px;letter-spacing:-.01em}
+  .panel .sub{color:var(--ink-2);margin-top:8px}
+  .drow{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--line)}
+  .drow:last-child{border-bottom:0;padding-bottom:0}
+  .drow .n{font-family:"Fraunces",serif;font-weight:900;font-size:34px;line-height:1;color:var(--mango);width:48px;flex:none}
+  .drow strong{display:block;font-size:17px}
+  .drow em{font-style:normal;color:var(--ink-2);font-size:15px}
+
+  /* ---------- Mapa ---------- */
+  .map-panel{padding:0;overflow:hidden}
+  .map-head{padding:28px 30px 18px}
+  .map-head h2{font-family:"Fraunces",serif;font-weight:900;font-size:29px;letter-spacing:-.01em}
+  .map-head .sub{color:var(--ink-2);margin-top:8px}
+  #map{height:420px;width:100%;background:#f3e9e2;z-index:1}
+  .leaflet-container{font-family:"Manrope",sans-serif}
+  .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--shadow-lg)}
+  .leaflet-popup-content{margin:12px 16px;font-size:14px;color:var(--ink)}
+  .leaflet-popup-content b{font-family:"Fraunces",serif;font-size:16px}
+  .legend{display:flex;flex-wrap:wrap;gap:20px;padding:18px 30px 26px;border-top:1px solid var(--line)}
+  .lg{display:flex;gap:11px;align-items:flex-start;flex:1;min-width:210px}
+  .dot{width:15px;height:15px;border-radius:50%;flex:none;margin-top:5px}
+  .dot.a{background:var(--fresa);box-shadow:0 0 0 4px rgba(239,47,104,.18)}
+  .dot.b{background:var(--mango);box-shadow:0 0 0 4px rgba(255,154,31,.2)}
+  .lg strong{display:block;font-size:16px}
+  .lg span{color:var(--ink-2);font-size:14px}
+  .zones{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip-z{font-size:13px;font-weight:600;color:var(--ink-2);background:#fff3f6;border:1px solid var(--line);padding:4px 11px;border-radius:999px}
+
+  /* ---------- Tarjeta Yape ---------- */
+  .ycard{
+    position:relative;border-radius:22px;padding:24px;color:#fff;overflow:hidden;
+    background:linear-gradient(140deg,#9b31bf 0%,#742284 55%,#4b1055 100%);
+    box-shadow:0 20px 44px -18px rgba(116,34,132,.8);
+    min-height:216px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;
+    margin-top:18px;
+  }
+  .ycard::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-115px;top:-135px;background:radial-gradient(closest-side,rgba(255,255,255,.22),transparent)}
+  .ycard::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;left:-95px;bottom:-125px;background:radial-gradient(closest-side,rgba(255,255,255,.12),transparent)}
+  .ytop{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2}
+  .ylogo{font-family:"Fraunces",serif;font-weight:900;font-size:26px;letter-spacing:-.02em}
+  .chip{width:40px;height:30px;border-radius:7px;background:linear-gradient(145deg,#f7d488,#c99b3f);position:relative}
+  .chip i{position:absolute;left:6px;right:6px;height:1.5px;background:rgba(0,0,0,.25)}
+  .chip i:first-child{top:10px}
+  .chip i:last-child{top:18px}
+  .ynum{position:relative;z-index:2;font-family:"Fraunces",serif;font-weight:900;font-size:clamp(26px,4.2vw,33px);letter-spacing:.04em}
+  .ybot{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+  .ybot .lbl{display:block;font-size:11px;opacity:.72;letter-spacing:.06em;font-weight:600}
+  .ybot .val{font-weight:700;font-size:15px}
+  .copy{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;font-family:"Manrope",sans-serif;font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px;cursor:pointer;transition:background .2s}
+  .copy:hover{background:rgba(255,255,255,.3)}
+
+  /* ---------- Carrito ---------- */
+  .qty{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
+  .qty button{
+    width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:#fff;
+    color:var(--ink);font-size:18px;font-weight:700;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,color .15s;
+  }
+  .qty button:hover:not(:disabled){background:var(--fresa);border-color:var(--fresa);color:#fff}
+  .qty button:disabled{opacity:.32;cursor:default}
+  .qty .n{min-width:26px;font-weight:800;font-size:17px;font-variant-numeric:tabular-nums}
+  .fcard.on{border-color:var(--fresa);box-shadow:0 0 0 3px rgba(239,47,104,.12),var(--shadow)}
+
+  .cartbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:70;
+    background:rgba(255,255,255,.95);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);box-shadow:0 -8px 30px -12px rgba(61,16,41,.25);
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .cartbar.show{transform:translateY(0)}
+  .cartbar .in{max-width:var(--max);margin:0 auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .cartbar .sum strong{display:block;font-family:"Fraunces",serif;font-weight:900;font-size:20px;line-height:1.1}
+  .cartbar .sum span{font-size:14px;color:var(--ink-2)}
+  .btn-ghost{
+    border:1px solid var(--line);background:#fff;color:var(--ink);font-family:"Manrope",sans-serif;
+    font-weight:700;font-size:15px;padding:13px 20px;border-radius:999px;cursor:pointer;transition:border-color .2s
+  }
+  .btn-ghost:hover{border-color:var(--fresa)}
+  @media(max-width:560px){
+    .cartbar .in{padding:12px 16px;gap:10px}
+    .cartbar .sum strong{font-size:17px}
+    .cartbar .wa-btn{font-size:14px;padding:12px 16px}
+    .cartbar .btn-ghost{display:none}
+  }
+
+  .scrim{position:fixed;inset:0;background:rgba(61,16,41,.42);opacity:0;pointer-events:none;transition:opacity .3s;z-index:88}
+  .scrim.show{opacity:1;pointer-events:auto}
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);z-index:90;
+    background:var(--bg);border-left:1px solid var(--line);
+    transform:translateX(102%);transition:transform .32s cubic-bezier(.22,1,.36,1);
+    display:flex;flex-direction:column;
+  }
+  .drawer.show{transform:translateX(0)}
+  .dr-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--line)}
+  .dr-head h2{font-family:"Fraunces",serif;font-weight:900;font-size:25px}
+  .x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:18px;color:var(--ink-2)}
+  .dr-body{flex:1;overflow-y:auto;padding:8px 24px 20px}
+  .empty{text-align:center;color:var(--ink-2);padding:50px 10px;font-size:15px}
+  .li{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .li .nm{flex:1;min-width:0}
+  .li .nm strong{display:block;font-size:16px;font-weight:700}
+  .li .nm span{font-size:13px;color:var(--ink-2)}
+  .li .sub{font-weight:800;font-size:15px;min-width:62px;text-align:right;font-variant-numeric:tabular-nums}
+  .li .qty{margin:0;gap:7px}
+  .li .qty button{width:27px;height:27px;font-size:15px}
+  .li .qty .n{min-width:18px;font-size:15px}
+
+  .dr-foot{border-top:1px solid var(--line);padding:20px 24px;background:#fff}
+  .zone-lbl{font-size:14px;color:var(--ink-2);margin-bottom:9px}
+  .zones-pick{display:flex;gap:8px;margin-bottom:16px}
+  .zones-pick button{
+    flex:1;border:1px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;
+    font-family:"Manrope",sans-serif;font-weight:700;font-size:13.5px;padding:11px 8px;border-radius:14px;
+    transition:all .18s;line-height:1.3;
+  }
+  .zones-pick button em{display:block;font-style:normal;font-weight:500;font-size:12px;opacity:.8}
+  .zones-pick button.sel{border-color:var(--fresa);background:#fff1f5;color:var(--ink)}
+  .totals{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .totals .t{font-family:"Fraunces",serif;font-weight:900;font-size:27px}
+  .totals .u{color:var(--ink-2);font-size:14px}
+  .hint{font-size:13.5px;color:var(--mango);font-weight:600;margin-bottom:12px;min-height:20px}
+  .dr-foot .wa-btn{width:100%;justify-content:center}
+  .wa-btn.off{pointer-events:none;filter:grayscale(.75);opacity:.55;animation:none}
+  body.has-cart{padding-bottom:78px}
+
+  /* ---------- WhatsApp ---------- */
+  .wa-btn{
+    position:relative;display:inline-flex;align-items:center;gap:11px;padding:16px 28px;border-radius:999px;
+    font-weight:800;font-size:17px;color:#04310f;
+    background:linear-gradient(135deg,#62f193,var(--wa) 46%,#12a655);
+    overflow:hidden;isolation:isolate;transition:transform .18s ease;
+    animation:glow 2.6s ease-in-out infinite;
+  }
+  .wa-btn:hover{transform:translateY(-2px)}
+  .wa-btn svg{width:23px;height:23px;flex:none}
+  .wa-btn::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,.8) 49%,transparent 64%);transform:translateX(-135%);animation:shine 3s ease-in-out infinite}
+  @keyframes glow{0%,100%{box-shadow:0 0 6px rgba(37,211,102,.35),0 12px 28px -8px rgba(37,211,102,.5)}50%{box-shadow:0 0 28px rgba(37,211,102,.7),0 16px 36px -8px rgba(37,211,102,.6)}}
+  @keyframes shine{0%{transform:translateX(-135%)}55%,100%{transform:translateX(135%)}}
+
+  .fab{
+    position:fixed;right:22px;bottom:22px;z-index:80;display:flex;align-items:center;justify-content:center;gap:0;
+    width:62px;height:62px;border-radius:999px;
+    background:linear-gradient(135deg,#62f193,var(--wa) 46%,#12a655);color:#04310f;
+    box-shadow:0 10px 26px -6px rgba(37,211,102,.7);
+    animation:glow 2.6s ease-in-out infinite;transition:width .28s ease,gap .28s ease,padding .28s ease;
+    overflow:hidden;white-space:nowrap;font-weight:800;font-size:16px;
+  }
+  .fab svg{width:30px;height:30px;flex:none}
+  .fab .txt{max-width:0;opacity:0;transition:max-width .28s ease,opacity .2s ease}
+  .fab:hover,.fab:focus-visible{width:184px;gap:10px;padding:0 20px;justify-content:flex-start}
+  .fab:hover .txt,.fab:focus-visible .txt{max-width:120px;opacity:1}
+  .fab::after{content:"";position:absolute;inset:-6px;border-radius:999px;border:2px solid rgba(37,211,102,.5);animation:ring 2.6s ease-out infinite}
+  @keyframes ring{0%{transform:scale(.9);opacity:.8}70%,100%{transform:scale(1.25);opacity:0}}
+  @media(max-width:520px){.fab{right:16px;bottom:16px}}
+
+  /* ---------- Cierre + footer ---------- */
+  .final .box{
+    background:linear-gradient(160deg,#ffffff,#fff0f4);border:1px solid var(--line);
+    border-radius:30px;padding:52px 26px;text-align:center;box-shadow:var(--shadow-lg);
+  }
+  .final h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,5vw,44px);letter-spacing:-.02em;line-height:1.04}
+  .final p{color:var(--ink-2);max-width:46ch;margin:14px auto 26px;font-size:17px}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 96px}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;color:var(--ink-2);font-size:14px}
+  .foot .wa-btn{font-size:15px;padding:13px 22px}
+
+  :focus-visible{outline:3px solid var(--fresa);outline-offset:3px}
+
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.counter{min-height:340px}}
+  @media(max-width:820px){.info-grid{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){
+    .rot,.wa-btn,.wa-btn::before,.fab,.fab::after{animation:none!important}
+    .rot{transform:rotateX(6deg) rotateY(-24deg)}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">Chup<em> Fruit</em></div>
+    <nav class="nav-links">
+      <a href="#sabores">Sabores</a>
+      <a href="#delivery">Delivery</a>
+      <a href="#pago">Pago</a>
+    </nav>
+    <span style="width:26px"></span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">Fresh &amp; delicious</span>
+      <h1 class="logo">Chup<span class="fruit">Fruit</span></h1>
+      <p class="lede"><b>100% fruta, 100% felicidad.</b> Chupetes artesanales de fruta y crema, hechos fresquitos y bien helados. Elige tu sabor, pide por WhatsApp y te lo llevamos.</p>
+      <a class="wa-btn" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%20chupetes" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.83-2-.93-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.11-.16.19-.33.21-.61.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.19.05-.35-.02-.49-.07-.14-.64-1.53-.87-2.1-.23-.55-.46-.48-.64-.49h-.55c-.19 0-.49.07-.75.35s-.98.96-.98 2.33.99 2.71 1.13 2.9c.14.19 1.96 2.99 4.75 4.19 1.77.76 2.46.83 3.34.7.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2z"/></svg>
+        Pide ya por WhatsApp
+      </a>
+      <div class="trust">
+        <div><strong>Desde S/ 2.00</strong><span>cada chupete</span></div>
+        <div><strong>13 sabores</strong><span>cremosos y frutales</span></div>
+        <div><strong>Delivery</strong><span>en toda la ciudad</span></div>
+      </div>
+    </div>
+    <div class="counter" id="counter" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="sec" id="sabores">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Nuestros sabores</h2>
+      <p>Cremosos y frutales, todos con fruta de verdad. Pasa el cursor sobre cualquiera para verlo girar.</p>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="note"><b>+18</b> &nbsp;Estos sabores contienen alcohol. Venta solo a mayores de edad.</p>
+  </div>
+</section>
+
+<section class="sec" id="delivery">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Hasta dónde llegamos</h2>
+      <p>Repartimos en Tingo María y alrededores. Mira en qué zona estás y cuántas unidades necesitas.</p>
+    </div>
+  </div>
+
+  <div class="wrap info-grid">
+    <div class="panel map-panel">
+      <div class="map-head">
+        <h2>Zona de reparto</h2>
+        <p class="sub">Tingo María, Huánuco. Toca el mapa para ver cada zona.</p>
+      </div>
+      <div id="map"></div>
+      <div class="legend">
+        <div class="lg">
+          <span class="dot a"></span>
+          <span>
+            <strong>Zona ciudad · mínimo 4</strong>
+            <span>Radio aprox. de 3 km desde el centro.</span>
+            <span class="zones">
+              <span class="chip-z">Centro</span>
+              <span class="chip-z">Castillo Grande</span>
+              <span class="chip-z">Afilador</span>
+              <span class="chip-z">Brisas del Huallaga</span>
+            </span>
+          </span>
+        </div>
+        <div class="lg">
+          <span class="dot b"></span>
+          <span>
+            <strong>Zona extendida · mínimo 8</strong>
+            <span>Hasta 10 km, fuera de la jurisdicción.</span>
+            <span class="zones">
+              <span class="chip-z">Supte San Jorge</span>
+              <span class="chip-z">Naranjillo</span>
+              <span class="chip-z">Las Palmas</span>
+              <span class="chip-z">Mapresa</span>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="pago">
+      <h2>Paga con Yape</h2>
+      <p class="sub">Yapea y mándanos la captura por WhatsApp para confirmar.</p>
+      <div class="ycard">
+        <div class="ytop">
+          <span class="ylogo">yape</span>
+          <span class="chip"><i></i><i></i></span>
+        </div>
+        <span class="ynum">939 617 373</span>
+        <div class="ybot">
+          <span>
+            <span class="lbl">TITULAR</span>
+            <span class="val">CHUP Fruit</span>
+          </span>
+          <button class="copy" id="copyBtn" type="button">Copiar número</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec final">
+  <div class="wrap">
+    <div class="box">
+      <h2>¿Se te antojó un CHUP?</h2>
+      <p>Arma tu pedido, mándanos los sabores por WhatsApp y te confirmamos al toque.</p>
+      <a class="wa-btn" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%3A%20" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.83-2-.93-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.11-.16.19-.33.21-.61.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.19.05-.35-.02-.49-.07-.14-.64-1.53-.87-2.1-.23-.55-.46-.48-.64-.49h-.55c-.19 0-.49.07-.75.35s-.98.96-.98 2.33.99 2.71 1.13 2.9c.14.19 1.96 2.99 4.75 4.19 1.77.76 2.46.83 3.34.7.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2z"/></svg>
+        Pide ya por WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <div class="brand" style="margin-bottom:6px">Chup<em> Fruit</em></div>
+      100% fruta, 100% felicidad · WhatsApp 939 617 373
+    </div>
+    <a class="wa-btn" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%20chupetes" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.83-2-.93-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.11-.16.19-.33.21-.61.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.19.05-.35-.02-.49-.07-.14-.64-1.53-.87-2.1-.23-.55-.46-.48-.64-.49h-.55c-.19 0-.49.07-.75.35s-.98.96-.98 2.33.99 2.71 1.13 2.9c.14.19 1.96 2.99 4.75 4.19 1.77.76 2.46.83 3.34.7.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2z"/></svg>
+      Escríbenos
+    </a>
+  </div>
+</footer>
+
+<div class="cartbar" id="cartbar">
+  <div class="in">
+    <div class="sum">
+      <strong id="barTotal">S/ 0.00</strong>
+      <span id="barUnits">0 unidades</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn-ghost" id="openDrawer" type="button">Ver pedido</button>
+      <a class="wa-btn" id="barSend" href="#">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.83-2-.93-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.11-.16.19-.33.21-.61.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.19.05-.35-.02-.49-.07-.14-.64-1.53-.87-2.1-.23-.55-.46-.48-.64-.49h-.55c-.19 0-.49.07-.75.35s-.98.96-.98 2.33.99 2.71 1.13 2.9c.14.19 1.96 2.99 4.75 4.19 1.77.76 2.46.83 3.34.7.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2z"/></svg>
+        Enviar pedido
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="drawer" aria-label="Tu pedido">
+  <div class="dr-head">
+    <h2>Tu pedido</h2>
+    <button class="x" id="closeDrawer" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-foot">
+    <p class="zone-lbl">¿A dónde lo llevamos?</p>
+    <div class="zones-pick">
+      <button type="button" data-zone="ciudad" class="sel">Dentro de la ciudad<em>mínimo 4</em></button>
+      <button type="button" data-zone="fuera">Fuera de la ciudad<em>mínimo 8</em></button>
+    </div>
+    <div class="totals">
+      <span class="u" id="drUnits">0 unidades</span>
+      <span class="t" id="drTotal">S/ 0.00</span>
+    </div>
+    <p class="hint" id="drHint"></p>
+    <a class="wa-btn off" id="drSend" href="#">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.83-2-.93-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.11-.16.19-.33.21-.61.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.19.05-.35-.02-.49-.07-.14-.64-1.53-.87-2.1-.23-.55-.46-.48-.64-.49h-.55c-.19 0-.49.07-.75.35s-.98.96-.98 2.33.99 2.71 1.13 2.9c.14.19 1.96 2.99 4.75 4.19 1.77.76 2.46.83 3.34.7.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2z"/></svg>
+      Enviar pedido por WhatsApp
+    </a>
+  </div>
+</aside>
+
+<a class="fab" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%20chupetes" target="_blank" rel="noopener" aria-label="Pedir por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.7-.83-2-.93-.26-.1-.45-.14-.64.14-.19.28-.73.92-.9 1.11-.16.19-.33.21-.61.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.19.05-.35-.02-.49-.07-.14-.64-1.53-.87-2.1-.23-.55-.46-.48-.64-.49h-.55c-.19 0-.49.07-.75.35s-.98.96-.98 2.33.99 2.71 1.13 2.9c.14.19 1.96 2.99 4.75 4.19 1.77.76 2.46.83 3.34.7.54-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2z"/></svg>
+  <span class="txt">Pide ya</span>
+</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ---------- Mapa de cobertura: Tingo María ---------- */
+(function(){
+  if(typeof L === 'undefined') return;
+  var BASE = [-9.2944, -76.0025];          // Plaza de Armas de Tingo María
+  var R_CIUDAD = 3000;                      // 3 km  -> mínimo 4 unidades
+  var R_EXTENDIDA = 10000;                  // 10 km -> mínimo 8 unidades
+
+  var map = L.map('map', {scrollWheelZoom:false, zoomControl:true}).setView(BASE, 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  var zonaExtendida = L.circle(BASE, {
+    radius: R_EXTENDIDA, color:'#ff9a1f', weight:2, fillColor:'#ff9a1f', fillOpacity:.12, dashArray:'6 6'
+  }).addTo(map).bindPopup('<b>Zona extendida</b><br>Pedido mínimo: 8 unidades');
+
+  L.circle(BASE, {
+    radius: R_CIUDAD, color:'#ef2f68', weight:2, fillColor:'#ef2f68', fillOpacity:.18
+  }).addTo(map).bindPopup('<b>Zona ciudad</b><br>Pedido mínimo: 4 unidades');
+
+  L.marker(BASE).addTo(map)
+    .bindPopup('<b>CHUP Fruit</b><br>Tingo María · 939 617 373');
+
+  // getBounds() solo funciona sobre un círculo ya agregado al mapa
+  map.fitBounds(zonaExtendida.getBounds(), {padding:[16,16]});
+  setTimeout(function(){ map.invalidateSize(); }, 200);
+
+  map.on('click', function(){ map.scrollWheelZoom.enable(); });
+  map.on('mouseout', function(){ map.scrollWheelZoom.disable(); });
+})();
+
+const FLAVORS = [
+  {n:"Oreo",            p:"2.50", c1:"#f6f1ea", c2:"#3c3237", e:"#6f6167", sp:"#2b2226"},
+  {n:"Fresa con leche", p:"2.00", c1:"#ffc3d5", c2:"#ef2f68", e:"#f16b93", sp:"#ffe3ec"},
+  {n:"Cappuccino",      p:"2.00", c1:"#e0bd96", c2:"#8a5a34", e:"#a8764a", sp:"#5e3a1e"},
+  {n:"Coco con leche",  p:"2.00", c1:"#ffffff", c2:"#ecdccb", e:"#f2e5d8", sp:"#d8c3ab"},
+  {n:"Maní con leche",  p:"2.00", c1:"#eccb9c", c2:"#b07a3e", e:"#c99a63", sp:"#7d5223"},
+  {n:"Ron con pasas",   p:"2.50", c1:"#d8b184", c2:"#6e4526", e:"#97673c", sp:"#40230f", a:1},
+  {n:"Maracumango",     p:"2.00", c1:"#ffd869", c2:"#ff5f2e", e:"#ff9448", sp:"#8a2f0a"},
+  {n:"Maracuyá",        p:"2.00", c1:"#ffe07a", c2:"#ff8a1f", e:"#ffb04a", sp:"#6b3000"},
+  {n:"Maracuyá sour",   p:"2.50", c1:"#fff0a8", c2:"#f0a90c", e:"#f7c744", sp:"#7a5200", a:1},
+  {n:"Lúcuma",          p:"2.00", c1:"#f4d29a", c2:"#cf9a4f", e:"#dcb371", sp:"#94682c"},
+  {n:"Mango",           p:"2.00", c1:"#ffdf72", c2:"#ff9500", e:"#ffba3d", sp:"#8f5200"},
+  {n:"Morochas",        p:"2.50", c1:"#f7ead7", c2:"#4a3a33", e:"#7c6759", sp:"#33251f"},
+  {n:"Cerveza negra",   p:"2.50", c1:"#c99a5c", c2:"#33200f", e:"#6d4b2a", sp:"#1d1108", a:1}
+];
+
+/* Sección elíptica del tubo: semieje X = A, semieje Z = B */
+const A = 24, B = 13, LAYERS = 15, ZMAX = 12.4, W = 80;
+const SEAL_Z = [-5, -2.5, 0, 2.5, 5];
+const SPECKS = [[24,14,4.4],[62,22,3.6],[40,58,4],[70,30,3.2],[18,74,3.4]];
+
+function buildPop(f, opts){
+  opts = opts || {};
+  const pop = document.createElement('div');
+  pop.className = 'pop' + (opts.spin ? ' spin' : '') + (opts.mid ? ' mid' : '');
+  pop.style.cssText = '--c1:' + f.c1 + ';--c2:' + f.c2 + ';--edge:' + f.e;
+
+  const rot = document.createElement('div');
+  rot.className = 'rot';
+  rot.style.animationDelay = '-' + (opts.delay || 0).toFixed(1) + 's';
+
+  /* Cuerpo: rebanadas de ancho variable -> silueta redondeada */
+  for(let i = 0; i < LAYERS; i++){
+    const z = -ZMAX + (2 * ZMAX) * i / (LAYERS - 1);
+    const w = 2 * A * Math.sqrt(Math.max(0, 1 - (z / B) * (z / B)));
+    const front = i === LAYERS - 1;
+
+    const l = document.createElement('div');
+    l.className = 'lay' + (front ? ' face' : '');
+    l.style.width = w.toFixed(1) + 'px';
+    l.style.left = ((W - w) / 2).toFixed(1) + 'px';
+    l.style.transform = 'translateZ(' + z.toFixed(2) + 'px)';
+    l.style.background = 'linear-gradient(168deg,' + f.c1 + ' 6%,' + f.c2 + ')';
+    l.style.filter = 'brightness(' + (0.70 + 0.36 * ((z / ZMAX) + 1) / 2).toFixed(2) + ')';
+
+    if(front) l.appendChild(Object.assign(document.createElement('div'), {className:'gloss'}));
+
+    /* trocitos (galleta, pasas, maní, semillas) sobre una rebanada cercana al frente */
+    if(i === LAYERS - 4){
+      SPECKS.forEach(function(s){
+        const d = document.createElement('div');
+        d.className = 'speck';
+        d.style.cssText = 'left:' + s[0] + '%;top:' + s[1] + '%;width:' + s[2] + 'px;height:' + s[2] + 'px;background:' + f.sp;
+        l.appendChild(d);
+      });
+    }
+    rot.appendChild(l);
+  }
+
+  /* Sellos crimpados arriba y abajo */
+  SEAL_Z.forEach(function(z){
+    ['top','bot'].forEach(function(pos){
+      const s = document.createElement('div');
+      s.className = 'seal ' + pos;
+      s.style.transform = 'translateZ(' + z + 'px)';
+      rot.appendChild(s);
+    });
+  });
+
+  /* Etiqueta impresa, al frente y al reverso */
+  [[12, 0], [-12, 180]].forEach(function(cfg){
+    const lb = document.createElement('div');
+    lb.className = 'label';
+    lb.style.transform = 'translateZ(' + cfg[0] + 'px) rotateY(' + cfg[1] + 'deg)';
+    lb.innerHTML = '<span class="lg">Chup<em> Fruit</em></span>';
+    rot.appendChild(lb);
+  });
+
+  pop.appendChild(rot);
+  return pop;
+}
+
+const counter = document.getElementById('counter');
+[FLAVORS[9], FLAVORS[1], FLAVORS[7]].forEach(function(f, i){
+  counter.appendChild(buildPop(f, {spin:true, mid:i === 1, delay:i * 4}));
+});
+
+const grid = document.getElementById('grid');
+FLAVORS.forEach(function(f, i){
+  const card = document.createElement('article');
+  card.className = 'fcard';
+  if(f.a) card.insertAdjacentHTML('beforeend', '<span class="plus">+18</span>');
+  const stage = document.createElement('div');
+  stage.className = 'stage';
+  stage.appendChild(buildPop(f, {delay:(i % 5) * 1.4}));
+  card.appendChild(stage);
+  card.insertAdjacentHTML('beforeend',
+    '<h3>' + f.n + '</h3><div class="price">S/ ' + f.p + '</div>' +
+    '<div class="qty" data-i="' + i + '">' +
+      '<button type="button" data-d="-1" aria-label="Quitar uno de ' + f.n + '" disabled>−</button>' +
+      '<span class="n">0</span>' +
+      '<button type="button" data-d="1" aria-label="Agregar uno de ' + f.n + '">+</button>' +
+    '</div>');
+  grid.appendChild(card);
+});
+
+/* ---------- Carrito ---------- */
+const TEL = '51939617373';
+const MIN = {ciudad:4, fuera:8};
+const ZONA_TXT = {ciudad:'Dentro de la ciudad', fuera:'Fuera de la ciudad'};
+
+const cart = {};            // {indice del sabor: cantidad}
+let zona = 'ciudad';
+
+const el = function(id){ return document.getElementById(id); };
+const money = function(n){ return 'S/ ' + n.toFixed(2); };
+
+function setQty(i, delta){
+  const q = Math.max(0, Math.min(99, (cart[i] || 0) + delta));
+  if(q === 0) delete cart[i]; else cart[i] = q;
+  render();
+}
+
+function totals(){
+  let u = 0, s = 0;
+  Object.keys(cart).forEach(function(i){
+    u += cart[i];
+    s += cart[i] * parseFloat(FLAVORS[i].p);
+  });
+  return {units:u, soles:s};
+}
+
+/* Texto del pedido que se manda a WhatsApp */
+function buildMessage(){
+  const t = totals();
+  let msg = '¡Hola CHUP Fruit! Quiero hacer este pedido:\n\n';
+  Object.keys(cart).forEach(function(i){
+    const f = FLAVORS[i];
+    msg += '• ' + cart[i] + ' × ' + f.n + ' — ' + money(cart[i] * parseFloat(f.p)) + '\n';
+  });
+  msg += '\nTotal: ' + t.units + ' unidades — ' + money(t.soles);
+  msg += '\nEntrega: ' + ZONA_TXT[zona];
+  msg += '\n\nQuedo atento para coordinar. ¡Gracias!';
+  return 'https://wa.me/' + TEL + '?text=' + encodeURIComponent(msg);
+}
+
+function render(){
+  const t = totals();
+  const falta = MIN[zona] - t.units;
+  const ok = t.units > 0 && falta <= 0;
+
+  /* Tarjetas del catálogo */
+  document.querySelectorAll('.qty[data-i]').forEach(function(box){
+    const i = box.dataset.i, q = cart[i] || 0;
+    box.querySelector('.n').textContent = q;
+    box.querySelector('[data-d="-1"]').disabled = q === 0;
+    const card = box.closest('.fcard');
+    if(card) card.classList.toggle('on', q > 0);
+  });
+
+  /* Barra inferior */
+  el('cartbar').classList.toggle('show', t.units > 0);
+  document.body.classList.toggle('has-cart', t.units > 0);
+  el('barTotal').textContent = money(t.soles);
+  el('barUnits').textContent = t.units + (t.units === 1 ? ' unidad' : ' unidades');
+
+  /* Lista del panel */
+  const body = el('drBody');
+  if(t.units === 0){
+    body.innerHTML = '<p class="empty">Todavía no eliges nada.<br>Agrega tus sabores desde el catálogo.</p>';
+  }else{
+    body.innerHTML = Object.keys(cart).map(function(i){
+      const f = FLAVORS[i];
+      return '<div class="li">' +
+        '<span class="nm"><strong>' + f.n + '</strong><span>S/ ' + f.p + ' c/u</span></span>' +
+        '<span class="qty" data-i="' + i + '">' +
+          '<button type="button" data-d="-1" aria-label="Quitar uno">−</button>' +
+          '<span class="n">' + cart[i] + '</span>' +
+          '<button type="button" data-d="1" aria-label="Agregar uno">+</button>' +
+        '</span>' +
+        '<span class="sub">' + money(cart[i] * parseFloat(f.p)) + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  el('drUnits').textContent = t.units + (t.units === 1 ? ' unidad' : ' unidades');
+  el('drTotal').textContent = money(t.soles);
+  el('drHint').textContent = t.units === 0 ? ''
+    : (falta > 0 ? 'Agrega ' + falta + (falta === 1 ? ' unidad más' : ' unidades más') + ' para el mínimo de esta zona.' : '');
+
+  const link = ok ? buildMessage() : '#';
+  [el('drSend'), el('barSend')].forEach(function(b){
+    b.classList.toggle('off', !ok);
+    b.href = link;
+    if(ok){ b.target = '_blank'; b.rel = 'noopener'; } else { b.removeAttribute('target'); }
+  });
+}
+
+/* Un solo listener para todos los +/- de la página */
+document.addEventListener('click', function(e){
+  const b = e.target.closest('.qty button');
+  if(!b) return;
+  setQty(b.parentElement.dataset.i, parseInt(b.dataset.d, 10));
+});
+
+/* Panel lateral */
+function drawer(open){
+  el('drawer').classList.toggle('show', open);
+  el('scrim').classList.toggle('show', open);
+}
+el('openDrawer').addEventListener('click', function(){ drawer(true); });
+el('closeDrawer').addEventListener('click', function(){ drawer(false); });
+el('scrim').addEventListener('click', function(){ drawer(false); });
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') drawer(false); });
+
+/* Zona de entrega */
+document.querySelectorAll('.zones-pick button').forEach(function(b){
+  b.addEventListener('click', function(){
+    zona = b.dataset.zone;
+    document.querySelectorAll('.zones-pick button').forEach(function(x){ x.classList.remove('sel'); });
+    b.classList.add('sel');
+    render();
+  });
+});
+
+render();
+
+const btn = document.getElementById('copyBtn');
+btn.addEventListener('click', function(){
+  const done = function(txt){
+    btn.textContent = txt;
+    setTimeout(function(){ btn.textContent = 'Copiar número'; }, 2200);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText('939617373').then(function(){ done('Número copiado'); }, function(){ done('939617373'); });
+  }else{
+    done('939617373');
+  }
+});
+</script>
+</body>
+</html>
