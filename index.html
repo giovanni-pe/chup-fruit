@@ -148,7 +148,7 @@
     padding:24px 20px 20px;box-shadow:var(--shadow);text-align:center;
     transition:transform .25s ease, box-shadow .25s ease;
   }
-  .fcard:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+  .fcard:hover{box-shadow:var(--shadow-lg)}
   .fcard:hover .rot{animation-duration:2.4s}
   .fcard .stage{display:flex;justify-content:center;margin-bottom:14px}
   .fcard h3{font-family:"Fraunces",serif;font-weight:600;font-size:21px;letter-spacing:-.01em}
@@ -315,16 +315,167 @@
   }
   .final h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,5vw,44px);letter-spacing:-.02em;line-height:1.04}
   .final p{color:var(--ink-2);max-width:46ch;margin:14px auto 26px;font-size:17px}
-  footer{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 96px}
-  .foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;color:var(--ink-2);font-size:14px}
-  .foot .wa-btn{font-size:15px;padding:13px 22px}
+
+
+  /* ================= Capa pro: detalles y animaciones ================= */
+  .progress{position:fixed;top:0;left:0;height:3px;width:100%;z-index:100;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--fresa),var(--mango),var(--uva))}
+  header{transition:box-shadow .3s ease,background .3s ease}
+  header.scrolled{background:rgba(255,248,243,.94);box-shadow:0 8px 30px -18px rgba(61,16,41,.35)}
+  .nav-links a{position:relative;padding:6px 0}
+  .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:var(--fresa);transform:scaleX(0);transition:transform .25s ease}
+  .nav-links a:hover::after,.nav-links a.act::after{transform:scaleX(1)}
+  .nav-links a.act{color:var(--ink)}
+  .nav-r{display:flex;align-items:center;gap:10px}
+  .hcart{position:relative;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s,transform .2s}
+  .hcart:hover{border-color:var(--fresa);transform:translateY(-1px)}
+  .hcart svg{width:21px;height:21px}
+  .hcart .cnt{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--fresa);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;transform:scale(0);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+  .hcart .cnt.on{transform:scale(1)}
+  .bump{animation:bump .45s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+  .burger{display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;position:relative}
+  .burger i{position:absolute;left:13px;right:13px;height:2px;border-radius:2px;background:var(--ink);transition:transform .25s ease,opacity .2s}
+  .burger i:nth-child(1){top:15px}.burger i:nth-child(2){top:21px}.burger i:nth-child(3){top:27px}
+  .menu-open .burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .menu-open .burger i:nth-child(2){opacity:0}
+  .menu-open .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+  @media(max-width:820px){
+    .burger{display:block}
+    .nav-links{display:flex;position:absolute;top:68px;left:0;right:0;flex-direction:column;gap:0;padding:8px 22px 18px;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 20px 30px -20px rgba(61,16,41,.3);transform:translateY(-8px);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+    .nav-links a{padding:13px 0;font-size:17px;border-bottom:1px solid var(--line)}
+    .nav-links a::after{display:none}
+    .menu-open .nav-links{opacity:1;transform:none;pointer-events:auto}
+  }
+
+  /* Revelado al hacer scroll */
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1);transition-delay:var(--d,0s)}
+  .rv.in{opacity:1;transform:none}
+  .hero .enter{opacity:0;animation:fadeUp .9s cubic-bezier(.22,1,.36,1) forwards;animation-delay:var(--d,0s)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--fresa);margin-bottom:12px}
+  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mango);box-shadow:0 0 0 4px rgba(255,154,31,.2)}
+  .sec-head h2 em{font-style:italic;color:var(--fresa)}
+
+  /* Hero: rayos (eco del logo), burbujas y sticker */
+  .hero{position:relative}
+  .counter{overflow:hidden;isolation:isolate}
+  .counter .rays{position:absolute;left:50%;top:52%;width:760px;height:760px;margin:-380px 0 0 -380px;z-index:-1;border-radius:50%;
+    background:repeating-conic-gradient(from 0deg, rgba(255,184,20,.16) 0 9deg, transparent 9deg 22deg);
+    -webkit-mask:radial-gradient(closest-side,#000 25%,transparent 75%);mask:radial-gradient(closest-side,#000 25%,transparent 75%);
+    animation:spin 60s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .bubble{position:absolute;border-radius:50%;z-index:-1;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.95),rgba(255,255,255,.25) 45%,rgba(239,47,104,.12));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);animation:float 7s ease-in-out infinite;animation-delay:var(--d,0s)}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+  .spark{position:absolute;width:16px;height:16px;z-index:-1;color:var(--mango);animation:twinkle 2.8s ease-in-out infinite;animation-delay:var(--d,0s)}
+  @keyframes twinkle{0%,100%{transform:scale(.6) rotate(0);opacity:.4}50%{transform:scale(1.1) rotate(45deg);opacity:1}}
+  .sticker{position:absolute;top:22px;right:22px;width:94px;height:94px;border-radius:50%;z-index:3;display:flex;align-items:center;justify-content:center;text-align:center;
+    background:var(--fresa);color:#fff;font-weight:800;font-size:12px;line-height:1.15;letter-spacing:.02em;box-shadow:0 10px 24px -8px rgba(239,47,104,.7);transform:rotate(12deg)}
+  .sticker b{display:block;font-family:"Fraunces",serif;font-size:24px;font-weight:900;letter-spacing:-.02em}
+  .sticker::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.6);animation:spin 18s linear infinite}
+  .trust strong .num{font-size:inherit;color:inherit;font-variant-numeric:tabular-nums}
+
+  /* Cinta de sabores */
+  .mq-wrap{overflow:hidden;padding:26px 0 10px;margin:0 0 -10px}
+  .marquee{position:relative;margin:0 -20px;padding:16px 0;background:var(--ink);color:#fff;transform:rotate(-1.6deg);overflow:hidden;box-shadow:0 18px 40px -24px rgba(61,16,41,.6)}
+  .marquee .track{display:flex;width:max-content;animation:scroll 38s linear infinite}
+  .marquee span{display:inline-flex;align-items:center;gap:22px;padding-right:22px;font-family:"Fraunces",serif;font-weight:900;font-style:italic;font-size:24px;white-space:nowrap}
+  .marquee svg{width:18px;height:18px;color:var(--mango);flex:none}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* Por qué CHUP */
+  .feats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px 22px;box-shadow:var(--shadow);transition:transform .3s ease,box-shadow .3s ease}
+  .feat:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+  .feat .ic{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;background:var(--bgc);color:var(--fgc);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+  .feat:hover .ic{transform:rotate(-8deg) scale(1.08)}
+  .feat .ic svg{width:26px;height:26px}
+  .feat h3{font-family:"Fraunces",serif;font-weight:900;font-size:20px;letter-spacing:-.01em}
+  .feat p{color:var(--ink-2);font-size:15px;margin-top:6px}
+  @media(max-width:900px){.feats{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.feats{grid-template-columns:1fr}}
+
+  /* Catálogo: filtros + tarjetas con inclinación 3D */
+  .filters{display:flex;flex-wrap:wrap;gap:10px;margin:-8px 0 28px}
+  .filters button{border:1px solid var(--line);background:#fff;color:var(--ink-2);font-family:"Manrope",sans-serif;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;cursor:pointer;transition:all .2s ease}
+  .filters button:hover{border-color:var(--fresa);color:var(--ink)}
+  .filters button.sel{background:var(--ink);border-color:var(--ink);color:#fff}
+  .filters button .c{opacity:.6;margin-left:4px;font-weight:600}
+  .fcard{overflow:hidden;transform-style:preserve-3d;
+    background:radial-gradient(120% 55% at 50% 0%, color-mix(in srgb, var(--acc) 20%, #fff), #fff 72%);
+    transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .3s ease, border-color .3s ease, opacity .35s ease}
+  .fcard:hover{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-6px)}
+  .fcard::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;transition:opacity .3s;
+    background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%), rgba(255,255,255,.55), transparent 60%)}
+  .fcard:hover::after{opacity:1}
+  .fcard .tag{display:inline-block;margin-bottom:4px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+  .fcard.hide{display:none}
+  .fcard.pop-in{animation:popIn .45s cubic-bezier(.34,1.56,.64,1) both;animation-delay:var(--d,0s)}
+  @keyframes popIn{from{opacity:0;transform:scale(.9) translateY(14px)}to{opacity:1;transform:none}}
+  .fcard .price{transition:transform .25s}
+  .fcard.on .price{background:var(--fresa);color:#fff}
+
+  /* Cómo pedir */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;position:relative;counter-reset:st}
+  .steps::before{content:"";position:absolute;top:36px;left:16%;right:16%;height:2px;background:repeating-linear-gradient(90deg,var(--mango) 0 8px,transparent 8px 16px);z-index:0}
+  .step{position:relative;z-index:1;text-align:center;padding:0 10px}
+  .step .bub{width:72px;height:72px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--fresa);position:relative}
+  .step .bub svg{width:30px;height:30px}
+  .step .bub::after{counter-increment:st;content:counter(st);position:absolute;top:-4px;right:-4px;width:26px;height:26px;border-radius:50%;background:var(--mango);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px var(--bg)}
+  .step h3{font-family:"Fraunces",serif;font-weight:900;font-size:21px}
+  .step p{color:var(--ink-2);font-size:15px;margin-top:6px;max-width:30ch;margin-inline:auto}
+  @media(max-width:760px){.steps{grid-template-columns:1fr;gap:30px}.steps::before{display:none}}
+
+  /* FAQ */
+  .faq{max-width:820px}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:20px;margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden;transition:border-color .2s}
+  .faq details[open]{border-color:rgba(239,47,104,.35)}
+  .faq summary{list-style:none;cursor:pointer;padding:20px 60px 20px 24px;font-weight:700;font-size:17px;position:relative}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"";position:absolute;right:24px;top:50%;width:22px;height:22px;margin-top:-11px;border-radius:50%;
+    background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ef2f68' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E") center/12px no-repeat;transition:transform .3s ease}
+  .faq details[open] summary::after{transform:rotate(135deg)}
+  .faq .ans{padding:0 24px 20px;color:var(--ink-2)}
+  .faq details[open] .ans{animation:fadeUp .4s ease}
+
+  /* CTA final animado */
+  .final .box{position:relative;overflow:hidden;isolation:isolate;border:0;color:#fff;
+    background:linear-gradient(120deg,#ef2f68,#ff7a3d,#ff9a1f,#b0368a,#ef2f68);background-size:300% 300%;animation:grad 14s ease infinite}
+  @keyframes grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  .final .box::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.25;background:radial-gradient(rgba(255,255,255,.9) 1.2px,transparent 1.6px) 0 0/22px 22px}
+  .final h2{color:#fff}
+  .final p{color:rgba(255,255,255,.88)}
+  .final .wa-btn{box-shadow:0 18px 40px -14px rgba(0,0,0,.4)}
+
+  /* Footer */
+  footer{background:#2a0b1c;color:rgba(255,255,255,.72);border-top:0;margin-top:60px;padding:56px 0 110px}
+  .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+  .fgrid h4{font-family:"Fraunces",serif;font-size:17px;color:#fff;margin-bottom:12px}
+  .fgrid a{display:block;padding:4px 0;transition:color .2s}
+  .fgrid a:hover{color:#fff}
+  .fgrid .brand img{height:70px;filter:drop-shadow(0 2px 0 #fff) drop-shadow(0 -1px 0 #fff) drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff)}
+  .fgrid p{font-size:15px;max-width:34ch;margin-top:10px}
+  .fbot{margin-top:36px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13.5px}
+  @media(max-width:760px){.fgrid{grid-template-columns:1fr}}
+
+  .paysteps{list-style:none;counter-reset:ps;margin-top:22px;display:grid;gap:14px}
+  .paysteps li{counter-increment:ps;display:flex;gap:12px;align-items:flex-start;color:var(--ink-2);font-size:15px}
+  .paysteps li::before{content:counter(ps);flex:none;width:26px;height:26px;border-radius:50%;background:#f2e6f7;color:var(--uva);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .paysteps b{color:var(--ink)}
+
+  /* Aviso al agregar */
+  .toast{position:fixed;left:50%;bottom:96px;z-index:95;display:flex;align-items:center;gap:10px;padding:11px 18px 11px 12px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;white-space:nowrap;box-shadow:0 16px 36px -12px rgba(61,16,41,.6);
+    transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast i{width:24px;height:24px;border-radius:50%;background:var(--acc,var(--fresa));box-shadow:inset 0 0 0 2px rgba(255,255,255,.7);flex:none}
 
   :focus-visible{outline:3px solid var(--fresa);outline-offset:3px}
 
   @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.counter{min-height:340px}}
   @media(max-width:820px){.info-grid{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){
-    .rot,.wa-btn,.wa-btn::before,.fab,.fab::after,h1.logo img{animation:none!important}
+    .rot,.wa-btn,.wa-btn::before,.fab,.fab::after,h1.logo img,.rays,.bubble,.spark,.sticker::before,.marquee .track,.final .box,.hero .enter,.fcard.pop-in{animation:none!important}
+    .hero .enter,.rv{opacity:1!important;transform:none!important}
     .rot{transform:rotateX(6deg) rotateY(-24deg)}
     html{scroll-behavior:auto}
   }
@@ -332,59 +483,121 @@
 </head>
 <body>
 
-<header>
+<div class="progress" id="progress"></div>
+<header id="top">
   <div class="wrap nav">
     <a class="brand" href="#"><img src="img/logo.webp" alt="CHUP Fruit" width="73" height="50"></a>
-    <nav class="nav-links">
+    <nav class="nav-links" id="navLinks">
       <a href="#sabores">Sabores</a>
+      <a href="#como">Cómo pedir</a>
       <a href="#delivery">Delivery</a>
       <a href="#pago">Pago</a>
+      <a href="#faq">Preguntas</a>
     </nav>
-    <span style="width:26px"></span>
+    <div class="nav-r">
+      <button class="hcart" id="hcart" type="button" aria-label="Ver tu pedido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cnt" id="hcnt">0</span></button>
+      <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
   </div>
 </header>
 
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="kicker">Fresh &amp; delicious</span>
-      <h1 class="logo"><img src="img/logo.webp" alt="CHUP Fruit" width="900" height="620"></h1>
-      <p class="lede"><b>100% fruta, 100% felicidad.</b> Chupetes artesanales de fruta y crema, hechos fresquitos y bien helados. Elige tu sabor, pide por WhatsApp y te lo llevamos.</p>
-      <a class="wa-btn" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%20chupetes" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
-        Pide ya por WhatsApp
+      <span class="kicker enter" style="--d:.05s">Fresh &amp; delicious</span>
+      <h1 class="logo enter" style="--d:.15s"><img src="img/logo.webp" alt="CHUP Fruit" width="900" height="620"></h1>
+      <p class="lede enter" style="--d:.3s"><b>100% fruta, 100% felicidad.</b> Chupetes artesanales de fruta y crema, hechos fresquitos y bien helados. Elige tu sabor, pide por WhatsApp y te lo llevamos.</p>
+      <a class="wa-btn enter" style="--d:.42s" href="#sabores">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        Arma tu pedido
       </a>
-      <div class="trust">
-        <div><strong>Desde S/ 2.00</strong><span>cada chupete</span></div>
-        <div><strong>13 sabores</strong><span>cremosos y frutales</span></div>
+      <div class="trust enter" style="--d:.55s">
+        <div><strong>Desde S/ <span class="num" data-count="2" data-dec="2">2.00</span></strong><span>cada chupete</span></div>
+        <div><strong><span class="num" data-count="13">13</span> sabores</strong><span>cremosos y frutales</span></div>
         <div><strong>Delivery</strong><span>en Tingo María centro</span></div>
       </div>
     </div>
-    <div class="counter" id="counter" aria-hidden="true"></div>
+    <div class="counter enter" style="--d:.25s" id="counter" aria-hidden="true"><div class="rays"></div><span class="bubble" style="width:46px;height:46px;left:9%;top:16%;--d:-1s"></span><span class="bubble" style="width:24px;height:24px;left:20%;top:58%;--d:-3s"></span><span class="bubble" style="width:34px;height:34px;right:12%;top:62%;--d:-5s"></span><span class="bubble" style="width:18px;height:18px;right:28%;top:12%;--d:-2s"></span><svg class="spark" viewBox="0 0 24 24" fill="currentColor" style="left:14%;top:38%;--d:-.4s"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg><svg class="spark" viewBox="0 0 24 24" fill="currentColor" style="right:10%;top:40%;--d:-1.6s;width:12px;height:12px"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg><svg class="spark" viewBox="0 0 24 24" fill="currentColor" style="left:34%;top:8%;--d:-2.2s;width:11px;height:11px"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg><span class="sticker"><span><b>100%</b>fruta de<br>verdad</span></span></div>
+  </div>
+</section>
+
+<div class="mq-wrap" aria-hidden="true"><div class="marquee"><div class="track" id="track"></div></div></div>
+
+<section class="sec" id="porque">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Por qué CHUP</span>
+      <h2>Fruta de verdad, <em>servida bien helada</em></h2>
+      <p>Chupetes artesanales, hechos en tandas pequeñas para que cada uno llegue fresquito.</p>
+    </div>
+    <div class="feats">
+      <div class="feat rv" style="--d:0s;--bgc:#ffe8ef;--fgc:#ef2f68">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7c-4 0-7 3-7 7 0 4 3 7 7 7s7-3 7-7c0-4-3-7-7-7z"/><path d="M12 7c0-2 1-4 3-4M12 7c-1-1-3-2-5-1"/></svg></span>
+        <h3>Fruta de verdad</h3>
+        <p>Pulpa de fruta en cada sabor frutal. Se nota desde la primera chupada.</p>
+      </div>
+      <div class="feat rv" style="--d:.08s;--bgc:#fff1dc;--fgc:#e07a00">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-3a2 2 0 0 0-4 0"/></svg></span>
+        <h3>Hecho a mano</h3>
+        <p>Preparados artesanalmente en Tingo María, con recetas de la casa.</p>
+      </div>
+      <div class="feat rv" style="--d:.16s;--bgc:#e4f4ff;--fgc:#1a7fc4">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4.9 4.9l14.2 14.2M2 12h20M4.9 19.1L19.1 4.9"/><path d="M9 3l3 2 3-2M9 21l3-2 3 2M3 9l2 3-2 3M21 9l-2 3 2 3"/></svg></span>
+        <h3>Bien heladitos</h3>
+        <p>Te llegan firmes y fríos, listos para disfrutar al toque.</p>
+      </div>
+      <div class="feat rv" style="--d:.24s;--bgc:#f2e6f7;--fgc:#8a3fa8">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h3"/></svg></span>
+        <h3>Pagas con Yape</h3>
+        <p>Yapeas, nos mandas la captura por WhatsApp y listo.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="sec" id="sabores">
   <div class="wrap">
-    <div class="sec-head">
-      <h2>Nuestros sabores</h2>
-      <p>Cremosos y frutales, todos con fruta de verdad. Pasa el cursor sobre cualquiera para verlo girar.</p>
+    <div class="sec-head rv">
+      <span class="eyebrow">El catálogo</span>
+      <h2>Nuestros <em>sabores</em></h2>
+      <p>Cremosos, frutales y con un toque de licor. Toca <b>+</b> para armar tu pedido.</p>
+    </div>
+    <div class="filters rv" id="filters" role="tablist" aria-label="Filtrar sabores">
+      <button type="button" class="sel" data-f="all">Todos</button>
+      <button type="button" data-f="f">Frutales</button>
+      <button type="button" data-f="c">Cremosos</button>
+      <button type="button" data-f="a">Con licor · +18</button>
     </div>
     <div class="grid" id="grid"></div>
     <p class="note"><b>+18</b> &nbsp;Estos sabores contienen alcohol. Venta solo a mayores de edad.</p>
   </div>
 </section>
 
+<section class="sec" id="como">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Así de fácil</span>
+      <h2>Cómo <em>pedir</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step rv" style="--d:0s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><h3>Elige tus sabores</h3><p>Combina los que quieras. El pedido mínimo es de 4 unidades.</p></div>
+      <div class="step rv" style="--d:.12s"><span class="bub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></span><h3>Envía tu pedido</h3><p>Te armamos el mensaje con todo listo para mandarlo por WhatsApp.</p></div>
+      <div class="step rv" style="--d:.24s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></span><h3>Yapea y recibe</h3><p>Confirmamos tu pedido y te lo llevamos dentro de Tingo María centro.</p></div>
+    </div>
+  </div>
+</section>
+
 <section class="sec" id="delivery">
   <div class="wrap">
-    <div class="sec-head">
-      <h2>Hasta dónde llegamos</h2>
+    <div class="sec-head rv">
+      <span class="eyebrow">Delivery</span>
+      <h2>Hasta dónde <em>llegamos</em></h2>
       <p>Repartimos solo en Tingo María centro. Revisa en el mapa si tu dirección está dentro de la zona.</p>
     </div>
   </div>
 
   <div class="wrap info-grid">
-    <div class="panel map-panel">
+    <div class="panel map-panel rv">
       <div class="map-head">
         <h2>Zona de reparto</h2>
         <p class="sub">Tingo María centro, Huánuco. Lo sombreado queda fuera de reparto.</p>
@@ -401,7 +614,7 @@
       </div>
     </div>
 
-    <div class="panel" id="pago">
+    <div class="panel rv" style="--d:.1s" id="pago">
       <h2>Paga con Yape</h2>
       <p class="sub">Yapea y mándanos la captura por WhatsApp para confirmar.</p>
       <div class="ycard">
@@ -418,13 +631,34 @@
           <button class="copy" id="copyBtn" type="button">Copiar número</button>
         </div>
       </div>
+      <ol class="paysteps">
+        <li><b>Yapea el total</b> de tu pedido al 939 617 373.</li>
+        <li><b>Envía la captura</b> por WhatsApp junto con tu pedido.</li>
+        <li><b>Te confirmamos</b> y coordinamos la entrega.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2>¿Tienes <em>dudas</em>?</h2>
+    </div>
+    <div class="faq">
+      <details class="rv"><summary>¿Cuál es el pedido mínimo?</summary><p class="ans">4 unidades por pedido. Puedes mezclar todos los sabores que quieras.</p></details>
+      <details class="rv"><summary>¿Hasta dónde hacen delivery?</summary><p class="ans">Solo dentro de Tingo María centro, aproximadamente 1.5 km alrededor de la Plaza de Armas. Revisa el mapa de arriba.</p></details>
+      <details class="rv"><summary>¿Cómo pago?</summary><p class="ans">Con Yape al 939 617 373 a nombre de CHUP Fruit. Envíanos la captura por WhatsApp y confirmamos tu pedido.</p></details>
+      <details class="rv"><summary>¿Qué sabores tienen licor?</summary><p class="ans">Ron con pasas, Maracuyá sour y Cerveza negra. Se venden solo a mayores de 18 años.</p></details>
+      <details class="rv"><summary>¿Cómo hago mi pedido?</summary><p class="ans">Agrega tus sabores en el catálogo y toca «Enviar pedido». Se abre WhatsApp con tu pedido y el total ya escritos.</p></details>
     </div>
   </div>
 </section>
 
 <section class="sec final">
   <div class="wrap">
-    <div class="box">
+    <div class="box rv">
       <h2>¿Se te antojó un CHUP?</h2>
       <p>Arma tu pedido, mándanos los sabores por WhatsApp y te confirmamos al toque.</p>
       <a class="wa-btn" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%3A%20" target="_blank" rel="noopener">
@@ -436,15 +670,30 @@
 </section>
 
 <footer>
-  <div class="wrap foot">
-    <div>
-      <div class="brand" style="margin-bottom:6px"><img src="img/logo.webp" alt="CHUP Fruit" width="73" height="50"></div>
-      100% fruta, 100% felicidad · WhatsApp 939 617 373
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#top"><img src="img/logo.webp" alt="CHUP Fruit" width="102" height="70" loading="lazy"></a>
+        <p>100% fruta, 100% felicidad. Chupetes artesanales de fruta y crema en Tingo María.</p>
+      </div>
+      <div>
+        <h4>Explora</h4>
+        <a href="#sabores">Sabores</a>
+        <a href="#como">Cómo pedir</a>
+        <a href="#delivery">Zona de delivery</a>
+        <a href="#faq">Preguntas frecuentes</a>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <a href="https://wa.me/51939617373" target="_blank" rel="noopener">WhatsApp · 939 617 373</a>
+        <a href="#pago">Yape · 939 617 373</a>
+        <a href="#delivery">Tingo María centro, Huánuco</a>
+      </div>
     </div>
-    <a class="wa-btn" href="https://wa.me/51939617373?text=%C2%A1Hola%20CHUP%20Fruit!%20Quiero%20pedir%20chupetes" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
-      Escríbenos
-    </a>
+    <div class="fbot">
+      <span>© <span id="yr">2026</span> CHUP Fruit</span>
+      <span>Sabores con licor: venta solo a mayores de 18 años.</span>
+    </div>
   </div>
 </footer>
 
@@ -465,6 +714,7 @@
 </div>
 
 <div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><i></i><span></span></div>
 
 <aside class="drawer" id="drawer" aria-label="Tu pedido">
   <div class="dr-head">
@@ -533,19 +783,19 @@
 })();
 
 const FLAVORS = [
-  {n:"Oreo",            p:"2.50", c1:"#f6f1ea", c2:"#3c3237", e:"#6f6167", sp:"#2b2226", k:16},
-  {n:"Fresa con leche", p:"2.00", c1:"#ffc3d5", c2:"#ef2f68", e:"#f16b93", sp:"#b3113f", k:8},
-  {n:"Cappuccino",      p:"2.00", c1:"#e0bd96", c2:"#8a5a34", e:"#a8764a", sp:"#5e3a1e"},
-  {n:"Coco con leche",  p:"2.00", c1:"#ffffff", c2:"#ecdccb", e:"#f2e5d8", sp:"#ffffff", k:10, lt:1},
-  {n:"Maní con leche",  p:"2.00", c1:"#eccb9c", c2:"#b07a3e", e:"#c99a63", sp:"#7d5223", k:9},
-  {n:"Ron con pasas",   p:"2.50", c1:"#d8b184", c2:"#6e4526", e:"#97673c", sp:"#40230f", k:14, a:1},
-  {n:"Maracumango",     p:"2.00", c1:"#ffd869", c2:"#ff5f2e", e:"#ff9448", sp:"#8a2f0a", k:6},
-  {n:"Maracuyá",        p:"2.00", c1:"#ffe07a", c2:"#ff8a1f", e:"#ffb04a", sp:"#3a1a00", k:14},
-  {n:"Maracuyá sour",   p:"2.50", c1:"#fff0a8", c2:"#f0a90c", e:"#f7c744", sp:"#7a5200", a:1},
-  {n:"Lúcuma",          p:"2.00", c1:"#f4d29a", c2:"#cf9a4f", e:"#dcb371", sp:"#94682c"},
-  {n:"Mango",           p:"2.00", c1:"#ffdf72", c2:"#ff9500", e:"#ffba3d", sp:"#8f5200"},
-  {n:"Morochas",        p:"2.50", c1:"#f7ead7", c2:"#4a3a33", e:"#7c6759", sp:"#33251f", k:12},
-  {n:"Cerveza negra",   p:"2.50", c1:"#c99a5c", c2:"#33200f", e:"#6d4b2a", sp:"#1d1108", a:1}
+  {n:"Oreo",            p:"2.50", c1:"#f6f1ea", c2:"#3c3237", e:"#6f6167", sp:"#2b2226", k:16, t:"c"},
+  {n:"Fresa con leche", p:"2.00", c1:"#ffc3d5", c2:"#ef2f68", e:"#f16b93", sp:"#b3113f", k:8, t:"c"},
+  {n:"Cappuccino",      p:"2.00", c1:"#e0bd96", c2:"#8a5a34", e:"#a8764a", sp:"#5e3a1e", t:"c"},
+  {n:"Coco con leche",  p:"2.00", c1:"#ffffff", c2:"#ecdccb", e:"#f2e5d8", sp:"#ffffff", k:10, lt:1, t:"c"},
+  {n:"Maní con leche",  p:"2.00", c1:"#eccb9c", c2:"#b07a3e", e:"#c99a63", sp:"#7d5223", k:9, t:"c"},
+  {n:"Ron con pasas",   p:"2.50", c1:"#d8b184", c2:"#6e4526", e:"#97673c", sp:"#40230f", k:14, a:1, t:"a"},
+  {n:"Maracumango",     p:"2.00", c1:"#ffd869", c2:"#ff5f2e", e:"#ff9448", sp:"#8a2f0a", k:6, t:"f"},
+  {n:"Maracuyá",        p:"2.00", c1:"#ffe07a", c2:"#ff8a1f", e:"#ffb04a", sp:"#3a1a00", k:14, t:"f"},
+  {n:"Maracuyá sour",   p:"2.50", c1:"#fff0a8", c2:"#f0a90c", e:"#f7c744", sp:"#7a5200", a:1, t:"a"},
+  {n:"Lúcuma",          p:"2.00", c1:"#f4d29a", c2:"#cf9a4f", e:"#dcb371", sp:"#94682c", t:"f"},
+  {n:"Mango",           p:"2.00", c1:"#ffdf72", c2:"#ff9500", e:"#ffba3d", sp:"#8f5200", t:"f"},
+  {n:"Morochas",        p:"2.50", c1:"#f7ead7", c2:"#4a3a33", e:"#7c6759", sp:"#33251f", k:12, t:"c"},
+  {n:"Cerveza negra",   p:"2.50", c1:"#c99a5c", c2:"#33200f", e:"#6d4b2a", sp:"#1d1108", a:1, t:"a"}
 ];
 
 /* Sección elíptica del tubo: semieje X = A (ancho), semieje Z = B (fondo).
@@ -637,17 +887,21 @@ const counter = document.getElementById('counter');
   counter.appendChild(buildPop(f, {spin:true, mid:i === 1, delay:i * 4}));
 });
 
+const TAG = {f:'Frutal', c:'Cremoso', a:'Con licor'};
 const grid = document.getElementById('grid');
 FLAVORS.forEach(function(f, i){
   const card = document.createElement('article');
-  card.className = 'fcard';
+  card.className = 'fcard rv';
+  card.dataset.t = f.t;
+  card.style.setProperty('--acc', f.c2);
+  card.style.setProperty('--d', ((i % 5) * 0.06).toFixed(2) + 's');
   if(f.a) card.insertAdjacentHTML('beforeend', '<span class="plus">+18</span>');
   const stage = document.createElement('div');
   stage.className = 'stage';
   stage.appendChild(buildPop(f, {delay:(i % 5) * 1.4}));
   card.appendChild(stage);
   card.insertAdjacentHTML('beforeend',
-    '<h3>' + f.n + '</h3><div class="price">S/ ' + f.p + '</div>' +
+    '<span class="tag">' + TAG[f.t] + '</span><h3>' + f.n + '</h3><div class="price">S/ ' + f.p + '</div>' +
     '<div class="qty" data-i="' + i + '">' +
       '<button type="button" data-d="-1" aria-label="Quitar uno de ' + f.n + '" disabled>−</button>' +
       '<span class="n">0</span>' +
@@ -667,8 +921,26 @@ const money = function(n){ return 'S/ ' + n.toFixed(2); };
 
 function setQty(i, delta){
   const q = Math.max(0, Math.min(99, (cart[i] || 0) + delta));
+  if(q === (cart[i] || 0)) return;
   if(q === 0) delete cart[i]; else cart[i] = q;
   render();
+  if(delta > 0) toast(FLAVORS[i]);
+  bump(el('hcart')); bump(el('barTotal'));
+}
+
+/* Reinicia la animación de "salto" aunque se dispare varias veces seguidas */
+function bump(node){
+  node.classList.remove('bump'); void node.offsetWidth; node.classList.add('bump');
+}
+
+let toastTimer;
+function toast(f){
+  const t = el('toast');
+  t.style.setProperty('--acc', f.c2);
+  t.querySelector('span').textContent = '+1 ' + f.n + ' al pedido';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1600);
 }
 
 function totals(){
@@ -713,6 +985,8 @@ function render(){
   document.body.classList.toggle('has-cart', t.units > 0);
   el('barTotal').textContent = money(t.soles);
   el('barUnits').textContent = t.units + (t.units === 1 ? ' unidad' : ' unidades');
+  el('hcnt').textContent = t.units;
+  el('hcnt').classList.toggle('on', t.units > 0);
 
   /* Lista del panel */
   const body = el('drBody');
@@ -759,11 +1033,112 @@ function drawer(open){
   el('scrim').classList.toggle('show', open);
 }
 el('openDrawer').addEventListener('click', function(){ drawer(true); });
+el('hcart').addEventListener('click', function(){ drawer(true); });
 el('closeDrawer').addEventListener('click', function(){ drawer(false); });
 el('scrim').addEventListener('click', function(){ drawer(false); });
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape') drawer(false); });
 
 render();
+
+/* ---------- Filtros del catálogo ---------- */
+el('filters').addEventListener('click', function(e){
+  const b = e.target.closest('button');
+  if(!b) return;
+  el('filters').querySelectorAll('button').forEach(function(x){ x.classList.toggle('sel', x === b); });
+  let n = 0;
+  grid.querySelectorAll('.fcard').forEach(function(c){
+    const show = b.dataset.f === 'all' || c.dataset.t === b.dataset.f;
+    c.classList.toggle('hide', !show);
+    c.classList.remove('pop-in');
+    if(show){
+      c.classList.add('in');
+      c.style.setProperty('--d', (n++ * 0.05).toFixed(2) + 's');
+      void c.offsetWidth; c.classList.add('pop-in');
+    }
+  });
+});
+/* contador por filtro */
+el('filters').querySelectorAll('button').forEach(function(b){
+  const n = b.dataset.f === 'all' ? FLAVORS.length : FLAVORS.filter(function(f){ return f.t === b.dataset.f; }).length;
+  b.insertAdjacentHTML('beforeend', '<span class="c">' + n + '</span>');
+});
+
+/* ---------- Inclinación 3D y brillo que sigue al cursor ---------- */
+if(matchMedia('(pointer:fine)').matches){
+  grid.addEventListener('mousemove', function(e){
+    const c = e.target.closest('.fcard');
+    if(!c) return;
+    const r = c.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    c.style.setProperty('--ry', ((x - .5) * 10).toFixed(2) + 'deg');
+    c.style.setProperty('--rx', ((.5 - y) * 8).toFixed(2) + 'deg');
+    c.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+    c.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+  });
+}
+
+/* ---------- Cinta de sabores ---------- */
+(function(){
+  const star = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>';
+  const row = FLAVORS.map(function(f){ return '<span>' + f.n + star + '</span>'; }).join('');
+  el('track').innerHTML = row + row;     // duplicado: el bucle -50% queda continuo
+})();
+
+/* ---------- Revelado al scroll, contadores y enlace activo ---------- */
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if('IntersectionObserver' in window && !reduce){
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(function(n){ io.observe(n); });
+
+  document.querySelectorAll('[data-count]').forEach(function(n){
+    const end = parseFloat(n.dataset.count), dec = parseInt(n.dataset.dec || '0', 10), t0 = performance.now() + 700;
+    (function tick(now){
+      const k = Math.min(1, Math.max(0, (now - t0) / 1200)), e = 1 - Math.pow(1 - k, 3);
+      n.textContent = (end * e).toFixed(dec);
+      if(k < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  });
+}else{
+  document.querySelectorAll('.rv').forEach(function(n){ n.classList.add('in'); });
+}
+
+const links = document.querySelectorAll('.nav-links a');
+if('IntersectionObserver' in window){
+  const spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      links.forEach(function(a){ a.classList.toggle('act', a.getAttribute('href') === '#' + en.target.id); });
+    });
+  }, {rootMargin:'-45% 0px -50% 0px'});
+  ['sabores','como','delivery','faq'].forEach(function(id){ spy.observe(el(id)); });
+}
+
+/* ---------- Barra de progreso y cabecera al hacer scroll ---------- */
+let ticking = false;
+function onScroll(){
+  const h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+  el('progress').style.transform = 'scaleX(' + (max > 0 ? h.scrollTop / max : 0).toFixed(4) + ')';
+  el('top').classList.toggle('scrolled', h.scrollTop > 8);
+  ticking = false;
+}
+addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(onScroll); } }, {passive:true});
+onScroll();
+
+/* ---------- Menú móvil ---------- */
+el('burger').addEventListener('click', function(){
+  const open = !el('top').classList.contains('menu-open');
+  el('top').classList.toggle('menu-open', open);
+  this.setAttribute('aria-expanded', open);
+});
+links.forEach(function(a){ a.addEventListener('click', function(){
+  el('top').classList.remove('menu-open'); el('burger').setAttribute('aria-expanded', false);
+}); });
+
+el('yr').textContent = new Date().getFullYear();
 
 const btn = document.getElementById('copyBtn');
 btn.addEventListener('click', function(){
