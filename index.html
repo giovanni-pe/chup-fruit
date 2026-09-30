@@ -899,7 +899,7 @@
           <span class="dot a"></span>
           <span>
             <strong>Tingo María centro · mínimo 5</strong>
-            <span>Radio aprox. de 1.5 km desde la Plaza de Armas. No repartimos a otros distritos ni caseríos.</span>
+            <span>Radio aprox. de 1.5 km desde nuestra tienda en Bella Durmiente. No repartimos a otros distritos ni caseríos.</span>
           </span>
         </div>
       </div>
@@ -939,7 +939,7 @@
     </div>
     <div class="faq">
       <details class="rv"><summary>¿Cuál es el pedido mínimo?</summary><p class="ans">5 unidades por pedido. Puedes mezclar todos los sabores que quieras, y en «Por persona» puedes armar el pedido de toda tu familia.</p></details>
-      <details class="rv"><summary>¿Hasta dónde hacen delivery?</summary><p class="ans">Solo dentro de Tingo María centro, aproximadamente 1.5 km alrededor de la Plaza de Armas. Revisa el mapa de arriba.</p></details>
+      <details class="rv"><summary>¿Hasta dónde hacen delivery?</summary><p class="ans">Solo dentro de Tingo María centro, aproximadamente 1.5 km alrededor de nuestra tienda en Bella Durmiente. Revisa el mapa de arriba.</p></details>
       <details class="rv"><summary>¿Cómo pago?</summary><p class="ans">Con Yape al 939 617 373 a nombre de CHUP Fruit (envíanos la captura por WhatsApp), o en efectivo al recibir. Si pagas en efectivo, dinos con qué billete pagas y te llevamos el vuelto.</p></details>
       <details class="rv"><summary>¿Dónde están?</summary><p class="ans">Estamos en Jr. 28 de Mayo 245, Bella Durmiente, Tingo María. Escríbenos por WhatsApp al 939 617 373.</p></details>
       <details class="rv"><summary>¿Qué sabores tienen licor?</summary><p class="ans">Ron con pasas, Maracuyá sour y Cerveza negra. Se venden solo a mayores de 18 años.</p></details>
@@ -1135,7 +1135,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* Zona de reparto: se usa en el mapa de cobertura y para validar la ubicación del pedido */
-const ZONA = {base:[-9.2944, -76.0025], r:1500};   // Plaza de Armas de Tingo María, 1.5 km
+const ZONA = {base:[-9.3064229, -75.9996039], r:1500};   // tienda CHUP Fruit (Bella Durmiente), 1.5 km
 
 /* ---------- Mapa de cobertura: solo Tingo María centro ---------- */
 (function(){
@@ -1165,7 +1165,7 @@ const ZONA = {base:[-9.2944, -76.0025], r:1500};   // Plaza de Armas de Tingo Ma
   }).addTo(map);
 
   L.marker(BASE).addTo(map)
-    .bindPopup('<b>Centro de la zona de reparto</b><br>Plaza de Armas de Tingo María');
+    .bindPopup('<b>CHUP Fruit</b><br>Jr. 28 de Mayo 245, Bella Durmiente<br>Repartimos 1.5 km a la redonda');
 
   var bounds = L.latLng(BASE).toBounds(R_CENTRO * 2);
   map.fitBounds(bounds, {padding:[12,12]});
