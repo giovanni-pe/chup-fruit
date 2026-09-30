@@ -133,6 +133,7 @@
   }
   .mklabel .brandline{display:block;font-family:"Fraunces",serif;font-weight:900;font-size:9px;letter-spacing:.02em;color:#874057}
   .mklabel .brandline em{font-style:italic;color:var(--fresa)}
+  .mklabel .flav.sm{font-size:9.5px;margin-top:2px;color:#874057}
   .mklabel .flav{display:block;margin-top:3px;font-family:"Manrope",sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
 
   /* ---------- Secciones ---------- */
@@ -775,7 +776,7 @@
       </a>
       <div class="trust enter" style="--d:.55s">
         <div><strong>Desde S/ <span class="num" data-count="2" data-dec="2">2.00</span></strong><span>cada chupete</span></div>
-        <div><strong><span class="num" data-count="13">13</span> sabores</strong><span>cremosos y frutales</span></div>
+        <div><strong><span class="num" data-count="16">16</span> sabores</strong><span>cremosos y frutales</span></div>
         <div><strong>Delivery</strong><span>en Tingo María centro</span></div>
       </div>
     </div>
@@ -791,7 +792,7 @@
       <div class="b3d-card">
         <img src="img/chupetes.webp" alt="Los 13 sabores de CHUP Fruit: fresa, maracumango, maracuyá, oreo, coco, mango, maní, cappuccino, lúcuma, morochas, cerveza negra, ron con pasas y maracuyá sour" width="1536" height="1024" loading="lazy">
         <span class="b3d-shine"></span>
-        <span class="b3d-chip l"><b>13</b> sabores</span>
+        <span class="b3d-chip l"><b>16</b> sabores</span>
         <span class="b3d-chip r">Desde <b>S/ 2.00</b></span>
       </div>
     </div>
@@ -852,12 +853,13 @@
     <div class="sec-head rv">
       <span class="eyebrow">El catálogo</span>
       <h2>Nuestros <em>sabores</em></h2>
-      <p>Cremosos, frutales y con un toque de licor. Toca <b>Agregar</b> en tus favoritos y luego <b>Hacer pedido</b>.</p>
+      <p>Cremosos, frutales, bañados en chocolate y con un toque de licor. Toca <b>Agregar</b> en tus favoritos y luego <b>Hacer pedido</b>.</p>
     </div>
     <div class="filters rv" id="filters" role="tablist" aria-label="Filtrar sabores">
       <button type="button" class="sel" data-f="all">Todos</button>
       <button type="button" data-f="f">Frutales</button>
       <button type="button" data-f="c">Cremosos</button>
+      <button type="button" data-f="ch">Con chocolate</button>
       <button type="button" data-f="a">Con licor · +18</button>
     </div>
     <div class="orderbar rv" id="orderbar">
@@ -1189,7 +1191,11 @@ const FLAVORS = [
   {n:"Lúcuma",          p:"2.00", c1:"#f4d29a", c2:"#cf9a4f", e:"#dcb371", sp:"#94682c", t:"f"},
   {n:"Mango",           p:"2.00", c1:"#ffdf72", c2:"#ff9500", e:"#ffba3d", sp:"#8f5200", t:"f"},
   {n:"Morochas",        p:"2.50", c1:"#f7ead7", c2:"#4a3a33", e:"#7c6759", sp:"#33251f", k:12, t:"c"},
-  {n:"Cerveza negra",   p:"2.50", c1:"#c99a5c", c2:"#33200f", e:"#6d4b2a", sp:"#1d1108", a:1, t:"a"}
+  {n:"Cerveza negra",   p:"2.50", c1:"#c99a5c", c2:"#33200f", e:"#6d4b2a", sp:"#1d1108", a:1, t:"a"},
+  /* ch = con chocolate; cov = color de la cobertura que baña la punta */
+  {n:"Sublime",         p:"2.50", c1:"#7a4a2c", c2:"#2b160a", e:"#4a2a16", sp:"#e2b77c", k:14, lt:1, t:"ch"},
+  {n:"Fresa con cobertura de chocolate",  p:"2.50", c1:"#ffc3d5", c2:"#ef2f68", e:"#f16b93", sp:"#b3113f", cov:"#3a1c0b", t:"ch", lbl:["Fresa","con chocolate"]},
+  {n:"Lúcuma con cobertura de chocolate", p:"2.50", c1:"#f4d29a", c2:"#cf9a4f", e:"#dcb371", sp:"#94682c", cov:"#3a1c0b", t:"ch", lbl:["Lúcuma","con chocolate"]}
 ];
 
 /* Sección elíptica del tubo: semieje X = A (ancho), semieje Z = B (fondo).
@@ -1200,6 +1206,14 @@ const TAIL_Z = [-2, 0, 2];
 /* Generador pseudoaleatorio con semilla: cada sabor tiene siempre los mismos trocitos */
 function rng(seed){
   return function(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+}
+
+/* Cobertura de chocolate: baña la parte de arriba y chorrea en gotas irregulares */
+function coating(c){
+  return 'radial-gradient(9% 5% at 22% 37%,' + c + ' 96%,transparent),' +
+    'radial-gradient(8% 7% at 52% 39%,' + c + ' 96%,transparent),' +
+    'radial-gradient(9% 4.5% at 80% 36%,' + c + ' 96%,transparent),' +
+    'linear-gradient(180deg,#5a2e14 0,' + c + ' 12%,#1f0d04 33.5%,transparent 34%)';
 }
 
 function buildPop(f, opts){
@@ -1224,8 +1238,8 @@ function buildPop(f, opts){
     l.style.width = w.toFixed(1) + 'px';
     l.style.left = ((W - w) / 2).toFixed(1) + 'px';
     l.style.transform = 'translateZ(' + z.toFixed(2) + 'px)';
-    l.style.background = 'var(--ice) 0 0/90px 90px, linear-gradient(168deg,' + f.c1 + ' 6%,' + f.c2 + ')';
-    l.style.backgroundBlendMode = 'soft-light, normal';
+    l.style.background = 'var(--ice) 0 0/90px 90px, ' + (f.cov ? coating(f.cov) + ', ' : '') + 'linear-gradient(168deg,' + f.c1 + ' 6%,' + f.c2 + ')';
+    l.style.backgroundBlendMode = f.cov ? 'soft-light, normal, normal, normal, normal, normal' : 'soft-light, normal';
     /* rango amplio de sombreado: centro iluminado y bordes oscuros = volumen cilíndrico */
     l.style.filter = 'brightness(' + (0.62 + 0.44 * ((z / ZMAX) + 1) / 2).toFixed(2) + ')';
 
@@ -1268,7 +1282,10 @@ function buildPop(f, opts){
     const lb = document.createElement('div');
     lb.className = 'mklabel';
     lb.style.transform = 'translateZ(' + cfg[0] + 'px) rotateY(' + cfg[1] + 'deg)';
-    lb.innerHTML = '<span class="mktext"><span class="brandline">CHUP<em> Fruit</em></span><span class="flav">' + f.n + '</span></span>';
+    /* nombres largos: dos líneas sin la marca, para que quepan en la etiqueta */
+    lb.innerHTML = '<span class="mktext">' + (f.lbl
+      ? '<span class="flav">' + f.lbl[0] + '</span><span class="flav sm">' + f.lbl[1] + '</span>'
+      : '<span class="brandline">CHUP<em> Fruit</em></span><span class="flav">' + f.n + '</span>') + '</span>';
     rot.appendChild(lb);
   });
 
@@ -1281,7 +1298,7 @@ const counter = document.getElementById('counter');
   counter.appendChild(buildPop(f, {spin:true, mid:i === 1, delay:i * 4}));
 });
 
-const TAG = {f:'Frutal', c:'Cremoso', a:'Con licor'};
+const TAG = {f:'Frutal', c:'Cremoso', ch:'Con chocolate', a:'Con licor'};
 const grid = document.getElementById('grid');
 FLAVORS.forEach(function(f, i){
   const card = document.createElement('article');
