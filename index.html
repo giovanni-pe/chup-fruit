@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CHUP Fruit — Chupetes de fruta, 100% felicidad</title>
-<meta name="description" content="Chupetes artesanales de fruta y crema. 100% fruta, 100% felicidad. Delivery en Tingo María centro. Pide por WhatsApp y paga con Yape.">
+<meta name="description" content="Chupetes artesanales de fruta y crema. 100% fruta, 100% felicidad. Delivery en Tingo María centro. Pide por WhatsApp y paga con Yape o en efectivo.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='28' y='40' width='8' height='22' rx='4' fill='%23c9964b'/%3E%3Cpath d='M10 20a22 22 0 0 1 44 0v20c0 8-10 14-22 14s-22-6-22-14z' fill='%23ef2f68'/%3E%3Cpath d='M10 36c6 4 14 6 22 6s16-2 22-6v4c0 8-10 14-22 14s-22-6-22-14z' fill='%23ffd9e4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -586,10 +586,10 @@
   .navbtns .btn-main{flex:1}
   .sendbtns{display:none;flex-direction:column;align-items:center;gap:6px}
   .sendbtns .wa-btn{width:100%;justify-content:center;font-size:16px}
-  .dr-foot.s3 .navbtns .btn-main{display:none}
-  .dr-foot.s3 .navbtns{margin-bottom:10px}
-  .dr-foot.s3 .sendbtns{display:flex}
-  .dr-foot.s4{display:none}
+  .dr-foot.s4 .navbtns .btn-main{display:none}
+  .dr-foot.s4 .navbtns{margin-bottom:10px}
+  .dr-foot.s4 .sendbtns{display:flex}
+  .dr-foot.s5{display:none}
   .dr-foot.s1 #backBtn{display:none}
 
   /* paso final */
@@ -649,6 +649,82 @@
     .seg button{padding:10px 14px}
   }
 
+  /* ===== Pago ===== */
+  .paygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .paycard{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;border:2px solid var(--line);background:#fff;border-radius:18px;padding:14px;cursor:pointer;font-family:"Manrope",sans-serif;color:var(--ink);transition:all .2s;position:relative}
+  .paycard:hover{border-color:rgba(239,47,104,.4)}
+  .paycard strong{font-size:16px}
+  .paycard>span:last-child{font-size:12.5px;color:var(--ink-2)}
+  .paycard.sel{border-color:var(--fresa);background:#fff4f7;box-shadow:0 0 0 3px rgba(239,47,104,.14)}
+  .paycard.sel::after{content:"✓";position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--fresa);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .pi{height:34px;min-width:34px;padding:0 8px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px}
+  .pi.yape{background:linear-gradient(140deg,#9b31bf,#742284);color:#fff;font-family:"Fraunces",serif;font-weight:900;font-size:15px}
+  .pi.cash{background:#e3f8ec;color:#128a44}
+  .pi.cash svg{width:22px;height:22px}
+  .paybox{display:none;margin-top:14px;padding:14px 16px;border-radius:18px;background:#fff;border:1px solid var(--line);animation:fadeUp .3s ease}
+  .paybox.show{display:block}
+  .paybox>p{font-size:14.5px;color:var(--ink-2);margin-bottom:10px}
+  .paybox>p b{color:var(--ink)}
+  .paybox .lbl{margin-top:0}
+  .bills{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .bill{border:2px solid transparent;border-radius:12px;padding:10px 6px;cursor:pointer;font-family:"Manrope",sans-serif;font-weight:800;font-size:15px;color:#fff;background:var(--bc);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);transition:transform .15s,box-shadow .2s,opacity .2s}
+  .bill small{display:block;font-size:10.5px;font-weight:700;opacity:.85}
+  .bill:hover:not(:disabled){transform:translateY(-2px)}
+  .bill.sel{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 0 3px var(--ink)}
+  .bill:disabled{opacity:.3;cursor:not-allowed}
+  .bill.plain{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+  .bill.plain.sel{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+  #otherWrap{display:none}
+  #otherWrap.show{display:block}
+  .change{margin-top:12px;font-size:14.5px;font-weight:700;color:var(--ink-2)}
+  .change b{font-family:"Fraunces",serif;font-size:20px;color:#128a44}
+  .change.bad{color:#d0312d}
+
+  /* ===== Hacer pedido: todo a la vista ===== */
+  .addbtn{margin-top:12px;width:100%;border:0;cursor:pointer;border-radius:999px;padding:11px 16px;font-family:"Manrope",sans-serif;font-weight:800;font-size:15px;color:#fff;
+    background:linear-gradient(135deg,#ff5a8a,var(--fresa));box-shadow:0 10px 20px -10px rgba(239,47,104,.8);transition:transform .15s,box-shadow .2s}
+  .addbtn:hover{transform:translateY(-2px);box-shadow:0 14px 24px -10px rgba(239,47,104,.9)}
+  .fcard .qty{display:none}
+  .fcard.on .qty{display:flex;animation:popIn .3s ease}
+  .fcard.on .addbtn{display:none}
+  .fcard.on .qty button[data-d="1"]{background:var(--fresa);border-color:var(--fresa);color:#fff}
+  .hcart{width:auto;height:44px;padding:0 14px;border-radius:999px;gap:8px;font-family:"Manrope",sans-serif;font-weight:800;font-size:14px}
+  .hcart .hl{white-space:nowrap}
+  .has-cart .hcart{background:var(--ink);color:#fff;border-color:var(--ink)}
+  @media(max-width:560px){.hcart .hl{display:none}.hcart{width:44px;padding:0}}
+  .barbtns{display:flex;gap:10px;align-items:center}
+  .btn-main.go{white-space:nowrap;background:linear-gradient(135deg,#ff5a8a,var(--fresa));font-size:16px;padding:14px 26px;box-shadow:0 12px 26px -10px rgba(239,47,104,.9)}
+  .btn-main.go.ready{animation:readyPulse 2s ease-in-out infinite}
+  @keyframes readyPulse{0%,100%{box-shadow:0 12px 26px -10px rgba(239,47,104,.9)}50%{box-shadow:0 12px 34px -6px rgba(239,47,104,1),0 0 0 6px rgba(239,47,104,.15)}}
+  .btn-main.big{font-size:17px;padding:16px 30px;background:linear-gradient(135deg,#ff5a8a,var(--fresa));box-shadow:0 14px 30px -12px rgba(239,47,104,.9)}
+  .como-cta{text-align:center;margin-top:36px}
+  .cartbar .sum{min-width:0}
+  .minbar{display:block;width:170px;max-width:100%;height:5px;border-radius:5px;background:rgba(61,16,41,.1);margin-top:6px;overflow:hidden}
+  .minbar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--mango),var(--fresa));transition:width .35s ease}
+  .minbar.full i{background:#25d366}
+  .cartbar .sum .minmsg{display:block;font-size:12.5px;font-weight:700;color:var(--mango);margin-top:3px}
+  .cartbar .sum .minmsg.ok{color:#128a44}
+  .steps{grid-template-columns:repeat(4,1fr)}
+  .steps::before{left:12%;right:12%}
+  @media(max-width:900px){.steps{grid-template-columns:1fr 1fr;gap:30px}.steps::before{display:none}}
+  @media(max-width:520px){.steps{grid-template-columns:1fr}}
+  .addr-line{display:flex;align-items:center;gap:8px;margin-top:10px !important;font-size:16px}
+  .addr-line svg{width:20px;height:20px;color:var(--fresa);flex:none}
+  .addr-line b{color:var(--ink)}
+  .cashcard{display:flex;align-items:center;gap:14px;margin-top:18px;padding:16px 18px;border-radius:18px;background:#e9f9ef;color:#0f6b35}
+  .cashcard svg{width:30px;height:30px;flex:none}
+  .cashcard b{display:block;font-size:16px;color:#0b4f27}
+  .cashcard span{font-size:14px}
+  .stepper li.on{cursor:pointer}
+  .stepper li.on:hover i{transform:scale(1.08)}
+  .emptycta{display:block;margin:0 auto}
+  .sumbox h4{display:flex;justify-content:space-between;align-items:center}
+  .sumbox h4 .btn-link{font-size:12.5px;letter-spacing:0;text-transform:none;padding:0;color:var(--fresa)}
+  @media(max-width:560px){
+    .cartbar .btn-main.go{font-size:15px;padding:13px 18px}
+    .minbar{width:120px}
+  }
+
   /* Aviso al agregar */
   .toast{position:fixed;left:50%;bottom:96px;z-index:95;display:flex;align-items:center;gap:10px;padding:11px 18px 11px 12px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;white-space:nowrap;box-shadow:0 16px 36px -12px rgba(61,16,41,.6);
     transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
@@ -660,7 +736,7 @@
   @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.counter{min-height:340px}}
   @media(max-width:820px){.info-grid{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){
-    .b3d-card,.b3d-shine::before,.rot,.wa-btn,.wa-btn::before,.fab,.fab::after,h1.logo img,.rays,.bubble,.spark,.sticker::before,.marquee .track,.final .box,.hero .enter,.fcard.pop-in{animation:none!important}
+    .btn-main.go.ready,.b3d-card,.b3d-shine::before,.rot,.wa-btn,.wa-btn::before,.fab,.fab::after,h1.logo img,.rays,.bubble,.spark,.sticker::before,.marquee .track,.final .box,.hero .enter,.fcard.pop-in{animation:none!important}
     .hero .enter,.rv{opacity:1!important;transform:none!important}
     .rot{transform:rotateX(6deg) rotateY(-24deg)}
     html{scroll-behavior:auto}
@@ -674,14 +750,14 @@
   <div class="wrap nav">
     <a class="brand" href="#"><img src="img/logo.webp" alt="CHUP Fruit" width="73" height="50"></a>
     <nav class="nav-links" id="navLinks">
-      <a href="#sabores">Sabores</a>
       <a href="#como">Cómo pedir</a>
+      <a href="#sabores">Sabores</a>
       <a href="#delivery">Delivery</a>
       <a href="#pago">Pago</a>
       <a href="#faq">Preguntas</a>
     </nav>
     <div class="nav-r">
-      <button class="hcart" id="hcart" type="button" aria-label="Ver tu pedido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cnt" id="hcnt">0</span></button>
+      <button class="hcart" id="hcart" type="button" aria-label="Ver mi pedido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="hl">Mi pedido</span><span class="cnt" id="hcnt">0</span></button>
       <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
   </div>
@@ -695,7 +771,7 @@
       <p class="lede enter" style="--d:.3s"><b>100% fruta, 100% felicidad.</b> Chupetes artesanales de fruta y crema, hechos fresquitos y bien helados. Elige tu sabor, pide por WhatsApp y te lo llevamos.</p>
       <a class="wa-btn enter" style="--d:.42s" href="#sabores">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-        Arma tu pedido
+        Hacer mi pedido
       </a>
       <div class="trust enter" style="--d:.55s">
         <div><strong>Desde S/ <span class="num" data-count="2" data-dec="2">2.00</span></strong><span>cada chupete</span></div>
@@ -747,10 +823,27 @@
       </div>
       <div class="feat rv" style="--d:.24s;--bgc:#f2e6f7;--fgc:#8a3fa8">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h3"/></svg></span>
-        <h3>Pagas con Yape</h3>
-        <p>Yapeas, nos mandas la captura por WhatsApp y listo.</p>
+        <h3>Yape o efectivo</h3>
+        <p>Yapea, o paga en efectivo al recibir: te llevamos el vuelto.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="sec" id="como">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Así de fácil</span>
+      <h2>Cómo <em>pedir</em></h2>
+      <p>En 4 pasos y en menos de un minuto.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv" style="--d:0s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span><h3>Elige tus sabores</h3><p>Toca «Agregar» en los que quieras. Mínimo 5 unidades.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><h3>Marca tu ubicación</h3><p>Con tu GPS o tocando el mapa, dentro de Tingo María centro.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg></span><h3>Elige cómo pagar</h3><p>Yape, o efectivo con el billete que tengas para tu vuelto.</p></div>
+      <div class="step rv" style="--d:.3s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></span><h3>Envía por WhatsApp</h3><p>Tu pedido llega completo y te confirmamos al toque.</p></div>
+    </div>
+    <div class="como-cta rv"><a class="btn-main big" href="#sabores">Empezar mi pedido <span aria-hidden="true">→</span></a></div>
   </div>
 </section>
 
@@ -759,7 +852,7 @@
     <div class="sec-head rv">
       <span class="eyebrow">El catálogo</span>
       <h2>Nuestros <em>sabores</em></h2>
-      <p>Cremosos, frutales y con un toque de licor. Toca <b>+</b> para armar tu pedido.</p>
+      <p>Cremosos, frutales y con un toque de licor. Toca <b>Agregar</b> en tus favoritos y luego <b>Hacer pedido</b>.</p>
     </div>
     <div class="filters rv" id="filters" role="tablist" aria-label="Filtrar sabores">
       <button type="button" class="sel" data-f="all">Todos</button>
@@ -783,19 +876,6 @@
   </div>
 </section>
 
-<section class="sec" id="como">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="eyebrow">Así de fácil</span>
-      <h2>Cómo <em>pedir</em></h2>
-    </div>
-    <div class="steps">
-      <div class="step rv" style="--d:0s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><h3>Elige tus sabores</h3><p>Combina los que quieras. El pedido mínimo es de 4 unidades.</p></div>
-      <div class="step rv" style="--d:.12s"><span class="bub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></span><h3>Envía tu pedido</h3><p>Te armamos el mensaje con todo listo para mandarlo por WhatsApp.</p></div>
-      <div class="step rv" style="--d:.24s"><span class="bub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></span><h3>Yapea y recibe</h3><p>Confirmamos tu pedido y te lo llevamos dentro de Tingo María centro.</p></div>
-    </div>
-  </div>
-</section>
 
 <section class="sec" id="delivery">
   <div class="wrap">
@@ -803,6 +883,7 @@
       <span class="eyebrow">Delivery</span>
       <h2>Hasta dónde <em>llegamos</em></h2>
       <p>Repartimos solo en Tingo María centro. Revisa en el mapa si tu dirección está dentro de la zona.</p>
+      <p class="addr-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg> Estamos en <b>Jr. 28 de Mayo 245, Bella Durmiente</b></p>
     </div>
   </div>
 
@@ -817,7 +898,7 @@
         <div class="lg">
           <span class="dot a"></span>
           <span>
-            <strong>Tingo María centro · mínimo 4</strong>
+            <strong>Tingo María centro · mínimo 5</strong>
             <span>Radio aprox. de 1.5 km desde la Plaza de Armas. No repartimos a otros distritos ni caseríos.</span>
           </span>
         </div>
@@ -825,8 +906,8 @@
     </div>
 
     <div class="panel rv" style="--d:.1s" id="pago">
-      <h2>Paga con Yape</h2>
-      <p class="sub">Yapea y mándanos la captura por WhatsApp para confirmar.</p>
+      <h2>Formas de pago</h2>
+      <p class="sub">Paga con Yape o en efectivo al recibir tu pedido.</p>
       <div class="ycard">
         <div class="ytop">
           <span class="ylogo">yape</span>
@@ -842,10 +923,10 @@
         </div>
       </div>
       <ol class="paysteps">
-        <li><b>Yapea el total</b> de tu pedido al 939 617 373.</li>
-        <li><b>Envía la captura</b> por WhatsApp junto con tu pedido.</li>
-        <li><b>Te confirmamos</b> y coordinamos la entrega.</li>
+        <li><b>Yape:</b> yapea el total al 939 617 373 y envía la captura por WhatsApp.</li>
+        <li><b>Efectivo:</b> pagas al recibir. Al hacer tu pedido indica con qué billete pagas y te llevamos el vuelto.</li>
       </ol>
+      <div class="cashcard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg><span><b>Efectivo contra entrega</b>Billetes de S/ 10, 20, 50, 100 o 200</span></div>
     </div>
   </div>
 </section>
@@ -857,9 +938,10 @@
       <h2>¿Tienes <em>dudas</em>?</h2>
     </div>
     <div class="faq">
-      <details class="rv"><summary>¿Cuál es el pedido mínimo?</summary><p class="ans">4 unidades por pedido. Puedes mezclar todos los sabores que quieras.</p></details>
+      <details class="rv"><summary>¿Cuál es el pedido mínimo?</summary><p class="ans">5 unidades por pedido. Puedes mezclar todos los sabores que quieras, y en «Por persona» puedes armar el pedido de toda tu familia.</p></details>
       <details class="rv"><summary>¿Hasta dónde hacen delivery?</summary><p class="ans">Solo dentro de Tingo María centro, aproximadamente 1.5 km alrededor de la Plaza de Armas. Revisa el mapa de arriba.</p></details>
-      <details class="rv"><summary>¿Cómo pago?</summary><p class="ans">Con Yape al 939 617 373 a nombre de CHUP Fruit. Envíanos la captura por WhatsApp y confirmamos tu pedido.</p></details>
+      <details class="rv"><summary>¿Cómo pago?</summary><p class="ans">Con Yape al 939 617 373 a nombre de CHUP Fruit (envíanos la captura por WhatsApp), o en efectivo al recibir. Si pagas en efectivo, dinos con qué billete pagas y te llevamos el vuelto.</p></details>
+      <details class="rv"><summary>¿Dónde están?</summary><p class="ans">Estamos en Jr. 28 de Mayo 245, Bella Durmiente, Tingo María. Escríbenos por WhatsApp al 939 617 373.</p></details>
       <details class="rv"><summary>¿Qué sabores tienen licor?</summary><p class="ans">Ron con pasas, Maracuyá sour y Cerveza negra. Se venden solo a mayores de 18 años.</p></details>
       <details class="rv"><summary>¿Cómo hago mi pedido?</summary><p class="ans">Agrega tus sabores en el catálogo y toca «Enviar pedido». Se abre WhatsApp con tu pedido y el total ya escritos.</p></details>
     </div>
@@ -897,7 +979,8 @@
         <h4>Contacto</h4>
         <a href="https://wa.me/51939617373" target="_blank" rel="noopener">WhatsApp · 939 617 373</a>
         <a href="#pago">Yape · 939 617 373</a>
-        <a href="#delivery">Tingo María centro, Huánuco</a>
+        <a href="#delivery">Jr. 28 de Mayo 245, Bella Durmiente</a>
+        <a href="#delivery">Tingo María, Huánuco</a>
       </div>
     </div>
     <div class="fbot">
@@ -912,10 +995,12 @@
     <div class="sum">
       <strong id="barTotal">S/ 0.00</strong>
       <span id="barUnits">0 unidades</span>
+      <span class="minbar"><i id="minFill"></i></span>
+      <span class="minmsg" id="minMsg"></span>
     </div>
-    <div style="display:flex;gap:10px;align-items:center">
+    <div class="barbtns">
       <button class="btn-ghost" id="openDrawer" type="button">Ver pedido</button>
-      <button class="btn-main" id="barSend" type="button">Continuar pedido <span aria-hidden="true">→</span></button>
+      <button class="btn-main go" id="barSend" type="button">Hacer pedido <span aria-hidden="true">→</span></button>
     </div>
   </div>
 </div>
@@ -936,7 +1021,8 @@
     <ol class="stepper" id="stepper">
       <li data-s="1"><i>1</i><span>Pedido</span></li>
       <li data-s="2"><i>2</i><span>Entrega</span></li>
-      <li data-s="3"><i>3</i><span>Confirmar</span></li>
+      <li data-s="3"><i>3</i><span>Pago</span></li>
+      <li data-s="4"><i>4</i><span>Confirmar</span></li>
     </ol>
     <div class="dr-body" id="drBody">
       <section class="stp" data-s="1">
@@ -966,12 +1052,31 @@
       </section>
 
       <section class="stp" data-s="3">
+        <p class="lbl">¿Cómo vas a pagar? <em class="req">obligatorio</em></p>
+        <div class="paygrid">
+          <button type="button" class="paycard" data-pay="yape"><span class="pi yape">yape</span><strong>Yape</strong><span>Al 939 617 373</span></button>
+          <button type="button" class="paycard" data-pay="efectivo"><span class="pi cash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg></span><strong>Efectivo</strong><span>Pagas al recibir</span></button>
+        </div>
+        <div class="paybox" id="payYape">
+          <p>Yapea <b class="ptot"></b> al <b>939 617 373</b> (CHUP Fruit) y envía la captura por WhatsApp junto con tu pedido.</p>
+          <button class="btn-ghost sm" type="button" data-copy="939617373">Copiar número</button>
+        </div>
+        <div class="paybox" id="payCash">
+          <p class="lbl">¿Con qué billete pagas? <em>así te llevamos el vuelto</em></p>
+          <div class="bills" id="bills"></div>
+          <label class="fld" id="otherWrap"><span>¿Con cuánto pagas?</span>
+            <input id="billOther" inputmode="decimal" maxlength="7" placeholder="Ej. 30"></label>
+          <div class="change" id="change"></div>
+        </div>
+      </section>
+
+      <section class="stp" data-s="4">
         <div id="summary"></div>
         <label class="fld"><span>Nota para el pedido <em>opcional</em></span>
           <textarea id="note" rows="2" maxlength="200" placeholder="Ej. Llamar al llegar"></textarea></label>
       </section>
 
-      <section class="stp done" data-s="4">
+      <section class="stp done" data-s="5">
         <div class="okmark"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg></div>
         <h3 id="doneTitle">¡Pedido guardado!</h3>
         <p id="doneText"></p>
@@ -1047,7 +1152,7 @@ const ZONA = {base:[-9.2944, -76.0025], r:1500};   // Plaza de Armas de Tingo Ma
 
   L.circle(BASE, {
     radius: R_CENTRO, color:'#ef2f68', weight:2.5, fillColor:'#ef2f68', fillOpacity:.14
-  }).addTo(map).bindPopup('<b>Tingo María centro</b><br>Pedido mínimo: 4 unidades');
+  }).addTo(map).bindPopup('<b>Tingo María centro</b><br>Pedido mínimo: 5 unidades');
 
   /* Todo lo que queda fuera del círculo se sombrea: polígono grande con el círculo como hueco */
   var hole = [], kLat = R_CENTRO / 111320, kLng = kLat / Math.cos(BASE[0] * Math.PI / 180);
@@ -1060,7 +1165,7 @@ const ZONA = {base:[-9.2944, -76.0025], r:1500};   // Plaza de Armas de Tingo Ma
   }).addTo(map);
 
   L.marker(BASE).addTo(map)
-    .bindPopup('<b>CHUP Fruit</b><br>Tingo María · 939 617 373');
+    .bindPopup('<b>Centro de la zona de reparto</b><br>Plaza de Armas de Tingo María');
 
   var bounds = L.latLng(BASE).toBounds(R_CENTRO * 2);
   map.fitBounds(bounds, {padding:[12,12]});
@@ -1072,7 +1177,7 @@ const ZONA = {base:[-9.2944, -76.0025], r:1500};   // Plaza de Armas de Tingo Ma
 })();
 
 const FLAVORS = [
-  {n:"Oreo",            p:"2.50", c1:"#f6f1ea", c2:"#3c3237", e:"#6f6167", sp:"#2b2226", k:16, t:"c"},
+  {n:"Oreo",            p:"3.00", c1:"#f6f1ea", c2:"#3c3237", e:"#6f6167", sp:"#2b2226", k:16, t:"c"},
   {n:"Fresa con leche", p:"2.00", c1:"#ffc3d5", c2:"#ef2f68", e:"#f16b93", sp:"#b3113f", k:8, t:"c"},
   {n:"Cappuccino",      p:"2.00", c1:"#e0bd96", c2:"#8a5a34", e:"#a8764a", sp:"#5e3a1e", t:"c"},
   {n:"Coco con leche",  p:"2.00", c1:"#ffffff", c2:"#ecdccb", e:"#f2e5d8", sp:"#ffffff", k:10, lt:1, t:"c"},
@@ -1191,6 +1296,7 @@ FLAVORS.forEach(function(f, i){
   card.appendChild(stage);
   card.insertAdjacentHTML('beforeend',
     '<span class="tag">' + TAG[f.t] + '</span><h3>' + f.n + '</h3><div class="price">S/ ' + f.p + '</div>' +
+    '<button type="button" class="addbtn" data-add="' + i + '" aria-label="Agregar ' + f.n + '">+ Agregar</button>' +
     '<div class="qty" data-i="' + i + '">' +
       '<button type="button" data-d="-1" aria-label="Quitar uno de ' + f.n + '" disabled>−</button>' +
       '<span class="n">0</span>' +
@@ -1201,7 +1307,7 @@ FLAVORS.forEach(function(f, i){
 
 /* ---------- Pedido: general o por persona, en 3 pasos ---------- */
 const TEL = '51939617373';
-const MIN = 4;                                // pedido mínimo en Tingo María centro
+const MIN = 5;                                // pedido mínimo en Tingo María centro
 const LS_DRAFT = 'chup_borrador', LS_HIST = 'chup_historial';
 const AV_COLORS = ['#ef2f68','#ff9a1f','#8a3fa8','#1a9e6e','#1a7fc4','#c2410c','#be185d'];
 
@@ -1217,7 +1323,9 @@ const store = {
 };
 
 const blankPerson = function(){ return {name:'', items:{}}; };
-const st = {mode:'general', people:[blankPerson()], active:0, step:1, addr:'', recv:'', pin:null, note:''};
+const st = {mode:'general', people:[blankPerson()], active:0, step:1, addr:'', recv:'', pin:null, note:'',
+  pay:{m:'', bill:'', other:''}};                // m: yape | efectivo; bill: exacto | 10 | 20 | … | otro
+const BILLS = [['10','#2e9e5b'], ['20','#c77d2e'], ['50','#d9534f'], ['100','#2f6fb3'], ['200','#8a3fa8']];
 
 (function loadDraft(){
   const d = store.get(LS_DRAFT, null);
@@ -1232,9 +1340,10 @@ const st = {mode:'general', people:[blankPerson()], active:0, step:1, addr:'', r
   st.active = Math.min(st.people.length - 1, Math.max(0, d.active | 0));
   st.addr = String(d.addr || ''); st.recv = String(d.recv || '');
   st.pin = d.pin && isFinite(d.pin[0]) && isFinite(d.pin[1]) ? [+d.pin[0], +d.pin[1]] : null;
+  if(d.pay && (d.pay.m === 'yape' || d.pay.m === 'efectivo')) st.pay = {m:d.pay.m, bill:String(d.pay.bill || ''), other:String(d.pay.other || '')};
 })();
 function saveDraft(){
-  store.set(LS_DRAFT, {mode:st.mode, people:st.people, active:st.active, addr:st.addr, recv:st.recv, pin:st.pin});
+  store.set(LS_DRAFT, {mode:st.mode, people:st.people, active:st.active, addr:st.addr, recv:st.recv, pin:st.pin, pay:st.pay});
 }
 
 const personLabel = function(p, k){ return (p.name || '').trim() || 'Persona ' + (k + 1); };
@@ -1335,7 +1444,30 @@ function stepProblem(step){
     if(st.pin && !inZone(st.pin)) return 'Tu ubicación está fuera de Tingo María centro.';
     if(st.addr.trim().length < 5) return 'Escribe tu dirección y una referencia.';
   }
+  if(step === 3){
+    if(!st.pay.m) return 'Elige cómo vas a pagar: Yape o efectivo.';
+    if(st.pay.m === 'efectivo'){
+      if(!st.pay.bill) return 'Dinos con qué billete pagas para llevarte el vuelto.';
+      const c = cashAmount();
+      if(!(c > 0)) return 'Escribe con cuánto vas a pagar.';
+      if(c < t.soles - 0.001) return 'El monto no alcanza para el total de ' + money(t.soles) + '.';
+    }
+  }
   return '';
+}
+
+/* cuánto entrega el cliente en efectivo (para calcular el vuelto) */
+function cashAmount(){
+  const b = st.pay.bill;
+  if(b === 'exacto') return totals().soles;
+  if(b === 'otro') return parseFloat(String(st.pay.other).replace(',', '.'));
+  return parseFloat(b);
+}
+function payText(pay, total){
+  if(!pay || !pay.m) return '';
+  if(pay.m === 'yape') return 'Yape al 939 617 373';
+  if(pay.bill === 'exacto' || Math.abs(pay.cash - total) < 0.005) return 'Efectivo · monto exacto';
+  return 'Efectivo · paga con ' + money(pay.cash) + ' → llevar vuelto de ' + money(pay.cash - total);
 }
 
 /* ----- pedido listo para guardar / enviar ----- */
@@ -1346,7 +1478,8 @@ function snapshot(sent){
     people: st.people.map(function(p){
       return {name: p.name.trim(), items: Object.keys(p.items).map(function(i){ return {n:FLAVORS[i].n, p:FLAVORS[i].p, q:p.items[i]}; })};
     }),
-    addr: st.addr.trim(), recv: st.recv.trim(), pin: st.pin, note: st.note.trim(), units: t.units, total: t.soles
+    addr: st.addr.trim(), recv: st.recv.trim(), pin: st.pin, note: st.note.trim(), units: t.units, total: t.soles,
+    pay: {m: st.pay.m, bill: st.pay.bill, cash: st.pay.m === 'efectivo' ? cashAmount() : 0}
   };
 }
 function messageFor(o){
@@ -1366,7 +1499,9 @@ function messageFor(o){
   if(o.recv) msg += '\nRecibe: ' + o.recv;
   if(o.pin) msg += '\nUbicación: https://maps.google.com/?q=' + o.pin[0].toFixed(6) + ',' + o.pin[1].toFixed(6);
   if(o.note) msg += '\nNota: ' + o.note;
-  msg += '\n\nPago con Yape al 939 617 373. ¡Gracias!';
+  msg += '\nPago: ' + (payText(o.pay, o.total) || 'Yape al 939 617 373');
+  if(o.pay && o.pay.m === 'yape') msg += '\n(Envío la captura del Yape por aquí)';
+  msg += '\n\n¡Gracias!';
   return 'https://wa.me/' + TEL + '?text=' + encodeURIComponent(msg);
 }
 function openWhatsApp(url){
@@ -1380,24 +1515,26 @@ const orders = {
   save: function(h){ store.set(LS_HIST, h.slice(0, 30)); }
 };
 function finish(send){
-  if(stepProblem(1) || stepProblem(2)){ go(stepProblem(1) ? 1 : 2); return; }
+  for(let k = 1; k <= 3; k++){ if(stepProblem(k)){ go(k); return; } }
   const o = snapshot(send);
   const h = orders.all(); h.unshift(o); orders.save(h);
   if(send) openWhatsApp(messageFor(o));
   el('doneTitle').textContent = send ? '¡Pedido enviado!' : '¡Pedido guardado!';
-  el('doneText').textContent = send
-    ? 'Se abrió WhatsApp con tu pedido. Envíalo y yapea al 939 617 373 para confirmar. También quedó en «Mis pedidos».'
-    : 'Lo guardamos en «Mis pedidos» de este dispositivo. Puedes enviarlo por WhatsApp cuando quieras.';
+  el('doneText').textContent = (send
+    ? 'Se abrió WhatsApp con tu pedido: solo toca «Enviar». '
+    : 'Lo guardamos en «Mis pedidos» de este dispositivo; envíalo por WhatsApp cuando quieras. ') +
+    (o.pay.m === 'yape' ? 'Recuerda yapear ' + money(o.total) + ' al 939 617 373 y mandar la captura.'
+      : 'Ten listo tu pago en efectivo' + (o.pay.cash > o.total + 0.005 ? '; llevamos tu vuelto de ' + money(o.pay.cash - o.total) + '.' : '.'));
   /* se vacía el carrito, pero la dirección y el modo quedan para el próximo pedido */
   st.people = [blankPerson()]; st.active = 0; st.note = ''; el('note').value = '';
-  saveDraft(); go(4);
+  saveDraft(); go(5);
 }
 
 /* ----- navegación del panel ----- */
 function drawer(open){
   el('drawer').classList.toggle('show', open);
   el('scrim').classList.toggle('show', open);
-  if(open && st.step === 4) st.step = 1;
+  if(open && st.step === 5) st.step = 1;
   if(open) render();
 }
 function tab(name){
@@ -1527,7 +1664,7 @@ function renderStep1(){
   if(st.mode === 'general'){
     const p = st.people[0];
     el('s1List').innerHTML = Object.keys(p.items).length ? itemRows(p, 0)
-      : '<p class="empty">Todavía no eliges nada.<br>Agrega tus sabores desde el catálogo.</p>';
+      : '<p class="empty">Todavía no eliges nada.<br>Agrega tus sabores desde el catálogo.</p><button class="btn-main emptycta" type="button" data-tocat>Ver sabores</button>';
     return;
   }
   el('s1List').innerHTML = st.people.map(function(p, k){
@@ -1551,9 +1688,37 @@ function renderChips(){
   }).join('') + '<button type="button" class="pchip add" data-addp>+ Persona</button>';
 }
 
+function renderPay(){
+  const t = totals();
+  document.querySelectorAll('.paycard').forEach(function(c){ c.classList.toggle('sel', c.dataset.pay === st.pay.m); });
+  el('payYape').classList.toggle('show', st.pay.m === 'yape');
+  el('payCash').classList.toggle('show', st.pay.m === 'efectivo');
+  document.querySelectorAll('.ptot').forEach(function(n){ n.textContent = money(t.soles); });
+  el('bills').innerHTML =
+    '<button type="button" class="bill plain' + (st.pay.bill === 'exacto' ? ' sel' : '') + '" data-bill="exacto">Monto exacto<small>' + money(t.soles) + '</small></button>' +
+    BILLS.map(function(b){
+      const v = +b[0], dis = v < t.soles - 0.001;
+      return '<button type="button" class="bill' + (st.pay.bill === b[0] ? ' sel' : '') + '" style="--bc:' + b[1] + '" data-bill="' + b[0] + '"' + (dis ? ' disabled' : '') + '>' +
+        'S/ ' + b[0] + '<small>' + (dis ? 'no alcanza' : 'vuelto ' + money(v - t.soles)) + '</small></button>';
+    }).join('') +
+    '<button type="button" class="bill plain' + (st.pay.bill === 'otro' ? ' sel' : '') + '" data-bill="otro">Otro monto<small>escríbelo</small></button>';
+  el('otherWrap').classList.toggle('show', st.pay.bill === 'otro');
+  if(document.activeElement !== el('billOther')) el('billOther').value = st.pay.other;
+  renderChange();
+}
+function renderChange(){
+  const t = totals(), ch = el('change');
+  ch.className = 'change';
+  if(st.pay.m !== 'efectivo' || !st.pay.bill){ ch.innerHTML = ''; return; }
+  const c = cashAmount();
+  if(!(c > 0)){ ch.innerHTML = ''; return; }
+  if(c < t.soles - 0.001){ ch.className = 'change bad'; ch.textContent = 'Ese monto no alcanza para ' + money(t.soles) + '.'; return; }
+  ch.innerHTML = c - t.soles < 0.005 ? 'Pagas justo: <b>' + money(t.soles) + '</b>' : 'Te llevamos de vuelto: <b>' + money(c - t.soles) + '</b>';
+}
+
 function renderSummary(){
   const t = totals();
-  let h = '<div class="sumbox"><h4>Tu pedido</h4>';
+  let h = '<div class="sumbox"><h4>Tu pedido <button class="btn-link" type="button" data-goto="1">Cambiar</button></h4>';
   st.people.forEach(function(p, k){
     if(st.mode === 'persona') h += '<div class="sperson">' + avatar(p, k) + esc(personLabel(p, k)) + '</div>';
     Object.keys(p.items).forEach(function(i){
@@ -1561,10 +1726,12 @@ function renderSummary(){
     });
   });
   h += '<div class="sline tot"><span>' + plural(t.units) + '</span><b>' + money(t.soles) + '</b></div></div>';
-  h += '<div class="sumbox"><h4>Entrega</h4><div>' + esc(st.addr.trim()) + '</div>' +
+  h += '<div class="sumbox"><h4>Entrega <button class="btn-link" type="button" data-goto="2">Cambiar</button></h4><div>' + esc(st.addr.trim()) + '</div>' +
     (st.recv.trim() ? '<div class="muted">Recibe: ' + esc(st.recv.trim()) + '</div>' : '') +
     (st.pin ? '<a href="https://maps.google.com/?q=' + st.pin[0] + ',' + st.pin[1] + '" target="_blank" rel="noopener">Ver ubicación en el mapa</a>' : '') + '</div>';
-  h += '<div class="sumbox"><h4>Pago</h4><div>Yape al <b>939 617 373</b> · envía la captura por WhatsApp.</div></div>';
+  const pt = payText({m:st.pay.m, bill:st.pay.bill, cash:st.pay.m === 'efectivo' ? cashAmount() : 0}, t.soles);
+  h += '<div class="sumbox"><h4>Pago <button class="btn-link" type="button" data-goto="3">Cambiar</button></h4><div>' + esc(pt) + '</div>' +
+    (st.pay.m === 'yape' ? '<div class="muted">Envía la captura del Yape por WhatsApp.</div>' : '') + '</div>';
   el('summary').innerHTML = h;
 }
 
@@ -1599,7 +1766,7 @@ function render(){
 
   /* panel por pasos */
   document.querySelectorAll('.stp').forEach(function(s){ s.classList.toggle('cur', +s.dataset.s === st.step); });
-  el('stepper').classList.toggle('hide', st.step === 4);
+  el('stepper').classList.toggle('hide', st.step === 5);
   el('stepper').querySelectorAll('li').forEach(function(li){
     const n = +li.dataset.s;
     li.classList.toggle('cur', n === st.step); li.classList.toggle('on', n < st.step);
@@ -1611,12 +1778,22 @@ function render(){
     if(st.pin){ const ok = inZone(st.pin); m.textContent = ok ? '✓ Ubicación dentro de la zona de reparto.' : 'Esta ubicación está fuera de Tingo María centro.'; m.className = 'locmsg ' + (ok ? 'ok' : 'bad'); }
     el('addr').value = st.addr; el('recv').value = st.recv;
   }
-  if(st.step === 3) renderSummary();
+  if(st.step === 3) renderPay();
+  if(st.step === 4) renderSummary();
   el('drUnits').textContent = plural(t.units);
   el('drTotal').textContent = money(t.soles);
-  const prob = st.step <= 2 ? stepProblem(st.step) : '';
+  const prob = st.step <= 3 ? stepProblem(st.step) : '';
   el('drHint').textContent = prob;
   el('nextBtn').disabled = !!prob;
+  el('nextBtn').innerHTML = ({1:'Siguiente: entrega', 2:'Siguiente: pago', 3:'Revisar mi pedido'}[st.step] || 'Continuar') + ' <span aria-hidden="true">→</span>';
+
+  /* progreso hacia el mínimo en la barra inferior */
+  const falta = Math.max(0, MIN - t.units);
+  el('minFill').style.width = Math.min(100, t.units / MIN * 100) + '%';
+  el('minFill').parentElement.classList.toggle('full', !falta);
+  el('minMsg').textContent = falta ? 'Te ' + (falta === 1 ? 'falta 1 unidad' : 'faltan ' + falta + ' unidades') + ' para el mínimo' : '¡Listo! Ya puedes hacer tu pedido';
+  el('minMsg').classList.toggle('ok', !falta);
+  el('barSend').classList.toggle('ready', !falta);
   renderModal();
 }
 
@@ -1636,7 +1813,7 @@ function renderHistory(){
     return '<article class="hcard">' +
       '<div class="hc-top"><strong>' + when + '</strong><span class="badge' + (o.sent ? ' sent' : '') + '">' + (o.sent ? 'Enviado' : 'Guardado') + '</span></div>' +
       '<div class="hc-body">' + lines + '</div>' +
-      '<div class="hc-meta"><span>' + esc(o.addr || '') + '</span><b>' + money(+o.total || 0) + '</b></div>' +
+      '<div class="hc-meta"><span>' + esc(o.addr || '') + (o.pay && o.pay.m ? '<br>' + esc(payText(o.pay, +o.total || 0)) : '') + '</span><b>' + money(+o.total || 0) + '</b></div>' +
       '<div class="hc-act">' +
         '<button type="button" data-h="repeat" data-id="' + o.id + '">Repetir</button>' +
         '<button type="button" class="wa" data-h="wa" data-id="' + o.id + '">Enviar por WhatsApp</button>' +
@@ -1694,6 +1871,32 @@ document.addEventListener('click', function(e){
   const dl = e.target.closest('[data-del]');
   if(dl){ removePerson(+dl.dataset.del); return; }
   if(e.target.closest('[data-go-hist]')){ tab('hist'); return; }
+  const ad = e.target.closest('[data-add]');
+  if(ad){ setQty(ad.dataset.add, 1); return; }
+  const pc = e.target.closest('[data-pay]');
+  if(pc){ st.pay.m = pc.dataset.pay; saveDraft(); render(); return; }
+  const bl = e.target.closest('[data-bill]');
+  if(bl && !bl.disabled){
+    st.pay.bill = bl.dataset.bill; saveDraft(); render();
+    if(st.pay.bill === 'otro') el('billOther').focus();
+    return;
+  }
+  const gt = e.target.closest('[data-goto]');
+  if(gt){ go(+gt.dataset.goto); return; }
+  const sli = e.target.closest('.stepper li.on');
+  if(sli){ go(+sli.dataset.s); return; }
+  if(e.target.closest('[data-tocat]')){ drawer(false); el('sabores').scrollIntoView({behavior:'smooth'}); return; }
+  const cp = e.target.closest('[data-copy]');
+  if(cp){
+    const txt = cp.textContent, done = function(){ cp.textContent = 'Número copiado'; setTimeout(function(){ cp.textContent = txt; }, 2000); };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(cp.dataset.copy).then(done, done); else done();
+  }
+});
+el('billOther').addEventListener('input', function(){
+  st.pay.other = this.value.replace(/[^0-9.,]/g, '').slice(0, 7);
+  saveDraft(); renderChange();
+  const prob = stepProblem(3);
+  el('drHint').textContent = prob; el('nextBtn').disabled = !!prob;
 });
 
 el('addr').addEventListener('input', function(){ st.addr = this.value; saveDraft(); el('drHint').textContent = stepProblem(2); el('nextBtn').disabled = !!stepProblem(2); });
@@ -1707,7 +1910,7 @@ el('newOrder').addEventListener('click', function(){ go(1); drawer(false); locat
 document.querySelectorAll('.dr-tabs button').forEach(function(b){ b.addEventListener('click', function(){ tab(b.dataset.tab); }); });
 
 el('openDrawer').addEventListener('click', function(){ tab('pedido'); drawer(true); });
-el('barSend').addEventListener('click', function(){ tab('pedido'); if(st.step === 4) st.step = 1; drawer(true); });
+el('barSend').addEventListener('click', function(){ tab('pedido'); if(st.step === 5) st.step = 1; drawer(true); });
 el('hcart').addEventListener('click', function(){ drawer(true); });
 el('closeDrawer').addEventListener('click', function(){ drawer(false); });
 el('scrim').addEventListener('click', function(){ drawer(false); });
