@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel · CHUP Fruit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='28' y='40' width='8' height='22' rx='4' fill='%23c9964b'/%3E%3Cpath d='M10 20a22 22 0 0 1 44 0v20c0 8-10 14-22 14s-22-6-22-14z' fill='%23ef2f68'/%3E%3Cpath d='M10 36c6 4 14 6 22 6s16-2 22-6v4c0 8-10 14-22 14s-22-6-22-14z' fill='%23ffd9e4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/popsicle.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+<div class="splash" id="splash" role="status" aria-label="Cargando"><span class="spinner"></span></div>
+
+<!-- ============ Acceso ============ -->
+<main class="auth" id="authView" hidden>
+  <form class="auth-card" id="loginForm" novalidate>
+    <img class="auth-logo" src="../img/logo.webp" alt="CHUP Fruit" width="146" height="100">
+    <h1>Panel administrativo</h1>
+    <p class="muted">Ingresa con tu cuenta de administrador para editar el catálogo.</p>
+    <label class="fld"><span>Correo</span>
+      <input type="email" id="loginEmail" autocomplete="username" required></label>
+    <label class="fld"><span>Contraseña</span>
+      <input type="password" id="loginPass" autocomplete="current-password" required></label>
+    <p class="form-error" id="loginError" role="alert"></p>
+    <button class="btn primary block" id="loginBtn" type="submit">Ingresar</button>
+    <a class="back-link" href="../">← Volver a la tienda</a>
+  </form>
+</main>
+
+<main class="auth" id="blockedView" hidden>
+  <div class="auth-card">
+    <img class="auth-logo" src="../img/logo.webp" alt="CHUP Fruit" width="146" height="100">
+    <h1 id="blockedTitle">Sin acceso</h1>
+    <p class="muted" id="blockedText"></p>
+    <button class="btn block" id="blockedLogout" type="button">Cerrar sesión</button>
+    <a class="back-link" href="../">← Volver a la tienda</a>
+  </div>
+</main>
+
+<!-- ============ Panel ============ -->
+<div class="app" id="appView" hidden>
+  <header class="topbar">
+    <a class="brand" href="../" title="Ver la tienda"><img src="../img/logo.webp" alt="CHUP Fruit" width="58" height="40"></a>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Secciones">
+      <button type="button" role="tab" data-view="products" class="sel">Productos</button>
+      <button type="button" role="tab" data-view="categories">Categorías</button>
+    </nav>
+    <div class="user">
+      <span class="who" id="userEmail"></span>
+      <a class="btn ghost sm" href="../" target="_blank" rel="noopener">Ver tienda</a>
+      <button class="btn ghost sm" id="logoutBtn" type="button">Salir</button>
+    </div>
+  </header>
+
+  <section class="view" id="productsView">
+    <div class="view-head">
+      <div>
+        <h1>Productos</h1>
+        <p class="muted" id="productsSummary">Cargando…</p>
+      </div>
+      <button class="btn primary" id="newProduct" type="button">+ Nuevo producto</button>
+    </div>
+    <div class="toolbar">
+      <input type="search" id="productSearch" placeholder="Buscar sabor…" aria-label="Buscar sabor">
+      <select id="productCategoryFilter" aria-label="Filtrar por categoría"><option value="">Todas las categorías</option></select>
+    </div>
+    <div class="rows" id="productsList"></div>
+  </section>
+
+  <section class="view" id="categoriesView" hidden>
+    <div class="view-head">
+      <div>
+        <h1>Categorías</h1>
+        <p class="muted">Cada categoría es un filtro del catálogo. Una categoría oculta esconde también sus productos.</p>
+      </div>
+      <button class="btn primary" id="newCategory" type="button">+ Nueva categoría</button>
+    </div>
+    <div class="rows" id="categoriesList"></div>
+  </section>
+</div>
+
+<!-- ============ Editor de producto ============ -->
+<dialog class="editor" id="productEditor" aria-labelledby="edTitle">
+  <form id="productForm" novalidate>
+    <header class="ed-head">
+      <h2 id="edTitle">Nuevo producto</h2>
+      <button class="x" type="button" id="edClose" aria-label="Cerrar">✕</button>
+    </header>
+
+    <div class="ed-body">
+      <div class="ed-main">
+        <nav class="ed-tabs" role="tablist">
+          <button type="button" role="tab" data-tab="datos" class="sel">Datos</button>
+          <button type="button" role="tab" data-tab="diseno">Diseño</button>
+          <button type="button" role="tab" data-tab="fotos">Fotos <span class="pill" id="photoCount"></span></button>
+        </nav>
+
+        <!-- Datos -->
+        <section class="ed-pane" data-pane="datos">
+          <label class="fld"><span>Nombre del sabor <em class="req">obligatorio</em></span>
+            <input id="pName" maxlength="80" autocomplete="off" placeholder="Ej. Camu camu">
+            <small class="err" data-err="name"></small></label>
+          <label class="fld"><span>Identificador (slug)</span>
+            <input id="pSlug" maxlength="80" autocomplete="off" spellcheck="false" placeholder="camu-camu">
+            <small class="hint">Se genera del nombre. Solo minúsculas, números y guiones.</small>
+            <small class="err" data-err="slug"></small></label>
+          <div class="fld-row">
+            <label class="fld"><span>Categoría <em class="req">obligatorio</em></span>
+              <select id="pCategory"></select>
+              <small class="err" data-err="categoryId"></small></label>
+            <label class="fld"><span>Precio (S/) <em class="req">obligatorio</em></span>
+              <input id="pPrice" type="number" inputmode="decimal" min="0" max="9999" step="0.10">
+              <small class="err" data-err="price"></small></label>
+          </div>
+          <label class="fld"><span>Descripción <em>opcional</em></span>
+            <textarea id="pDescription" rows="2" maxlength="500" placeholder="Aparece bajo el nombre en la tienda"></textarea>
+            <small class="err" data-err="description"></small></label>
+
+          <fieldset class="fld">
+            <legend>¿Cómo se muestra en la tienda?</legend>
+            <div class="choice">
+              <label><input type="radio" name="pDisplay" value="design" checked><span><b>Chupete 3D</b>El diseño de la pestaña Diseño</span></label>
+              <label><input type="radio" name="pDisplay" value="image"><span><b>Foto</b>La foto principal de la pestaña Fotos</span></label>
+            </div>
+            <small class="hint" id="pDisplayHint"></small>
+          </fieldset>
+
+          <div class="fld-row">
+            <label class="fld"><span>En la portada</span>
+              <select id="pFeatured">
+                <option value="">No destacar</option>
+                <option value="1">Posición 1 · izquierda</option>
+                <option value="2">Posición 2 · centro (grande)</option>
+                <option value="3">Posición 3 · derecha</option>
+              </select></label>
+            <div class="fld checks">
+              <label class="switch"><input type="checkbox" id="pActive" checked><span>Visible en la tienda</span></label>
+              <label class="switch"><input type="checkbox" id="pAdult"><span>Contiene licor (+18)</span></label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Diseño -->
+        <section class="ed-pane" data-pane="diseno" hidden>
+          <div class="preset">
+            <label class="fld"><span>Partir del diseño de otro sabor</span>
+              <select id="dPreset"><option value="">Elegir sabor…</option></select></label>
+            <button class="btn ghost sm" type="button" id="dPresetApply">Copiar diseño</button>
+          </div>
+
+          <div class="dgroup">
+            <h3>Cuerpo del chupete</h3>
+            <div class="colors">
+              <label class="color-fld"><span>Arriba</span><span class="cpick"><input type="color" data-color="colorTop" aria-label="Color de arriba"><input type="text" data-hex="colorTop" maxlength="7" spellcheck="false" aria-label="Hex de arriba"></span></label>
+              <label class="color-fld"><span>Abajo</span><span class="cpick"><input type="color" data-color="colorBottom" aria-label="Color de abajo"><input type="text" data-hex="colorBottom" maxlength="7" spellcheck="false" aria-label="Hex de abajo"></span></label>
+              <label class="color-fld"><span>Bordes</span><span class="cpick"><input type="color" data-color="colorEdge" aria-label="Color de bordes"><input type="text" data-hex="colorEdge" maxlength="7" spellcheck="false" aria-label="Hex de bordes"></span></label>
+            </div>
+            <button class="btn-link" type="button" id="dAutoEdge">Calcular el borde con los dos colores</button>
+          </div>
+
+          <div class="dgroup">
+            <h3>Trocitos <small>galleta, pasas, maní, semillas</small></h3>
+            <div class="colors">
+              <label class="color-fld"><span>Color</span><span class="cpick"><input type="color" data-color="speckColor" aria-label="Color de trocitos"><input type="text" data-hex="speckColor" maxlength="7" spellcheck="false" aria-label="Hex de trocitos"></span></label>
+              <label class="fld range"><span>Cantidad <b id="dSpeckCountOut">0</b></span>
+                <input type="range" id="dSpeckCount" min="0" max="40" step="1"></label>
+            </div>
+            <label class="switch"><input type="checkbox" id="dSpeckLight"><span>Trocitos claros sin sombra (coco, sublime)</span></label>
+          </div>
+
+          <div class="dgroup">
+            <h3>Cobertura de chocolate</h3>
+            <label class="switch"><input type="checkbox" id="dCoating"><span>Bañado en chocolate por arriba</span></label>
+            <div class="colors" id="dCoatingColorWrap">
+              <label class="color-fld"><span>Color de la cobertura</span><span class="cpick"><input type="color" data-color="coatingColor" aria-label="Color de cobertura"><input type="text" data-hex="coatingColor" maxlength="7" spellcheck="false" aria-label="Hex de cobertura"></span></label>
+            </div>
+          </div>
+
+          <div class="dgroup">
+            <h3>Etiqueta</h3>
+            <div class="choice">
+              <label><input type="radio" name="dLabel" value="brand" checked><span><b>CHUP Fruit + nombre</b>Para nombres cortos</span></label>
+              <label><input type="radio" name="dLabel" value="custom"><span><b>Texto propio</b>Dos líneas, para nombres largos</span></label>
+            </div>
+            <div class="fld-row" id="dLabelFields">
+              <label class="fld"><span>Línea grande</span><input id="dLabel1" maxlength="18" placeholder="Fresa"><small class="err" data-err="labelLine1"></small></label>
+              <label class="fld"><span>Línea pequeña</span><input id="dLabel2" maxlength="22" placeholder="con chocolate"></label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Fotos -->
+        <section class="ed-pane" data-pane="fotos" hidden>
+          <div id="imagesPane"></div>
+        </section>
+      </div>
+
+      <aside class="ed-preview" aria-label="Vista previa">
+        <p class="pv-label">Así se verá en la tienda</p>
+        <div class="pv-card" id="pvCard"></div>
+        <p class="pv-note" id="pvNote"></p>
+      </aside>
+    </div>
+
+    <footer class="ed-foot">
+      <p class="form-error" id="edError" role="alert"></p>
+      <button class="btn ghost" type="button" id="edCancel">Cancelar</button>
+      <button class="btn primary" type="submit" id="edSave">Guardar</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ Categoría ============ -->
+<dialog class="modal" id="categoryDialog" aria-labelledby="catTitle">
+  <form id="categoryForm" novalidate>
+    <header class="ed-head">
+      <h2 id="catTitle">Nueva categoría</h2>
+      <button class="x" type="button" id="catClose" aria-label="Cerrar">✕</button>
+    </header>
+    <div class="modal-body">
+      <label class="fld"><span>Nombre del filtro <em class="req">obligatorio</em></span>
+        <input id="cName" maxlength="60" autocomplete="off" placeholder="Ej. Frutales">
+        <small class="err" data-err="name"></small></label>
+      <label class="fld"><span>Identificador (slug)</span>
+        <input id="cSlug" maxlength="80" autocomplete="off" spellcheck="false" placeholder="frutales">
+        <small class="err" data-err="slug"></small></label>
+      <div class="fld-row">
+        <label class="fld"><span>Texto en la tarjeta <em>opcional</em></span>
+          <input id="cCardLabel" maxlength="40" placeholder="Ej. Frutal">
+          <small class="hint">Si lo dejas vacío se usa el nombre.</small></label>
+        <label class="fld"><span>Distintivo <em>opcional</em></span>
+          <input id="cBadge" maxlength="12" placeholder="Ej. +18, Nuevo"></label>
+      </div>
+      <label class="fld"><span>Descripción <em>opcional</em></span>
+        <textarea id="cDescription" rows="2" maxlength="300"></textarea></label>
+      <label class="switch"><input type="checkbox" id="cActive" checked><span>Visible en la tienda</span></label>
+    </div>
+    <footer class="ed-foot">
+      <p class="form-error" id="catError" role="alert"></p>
+      <button class="btn ghost" type="button" id="catCancel">Cancelar</button>
+      <button class="btn primary" type="submit" id="catSave">Guardar</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ Confirmación ============ -->
+<dialog class="modal sm" id="confirmDialog" aria-labelledby="cfTitle">
+  <form method="dialog">
+    <div class="modal-body">
+      <h2 id="cfTitle"></h2>
+      <p class="muted" id="cfText"></p>
+    </div>
+    <footer class="ed-foot">
+      <button class="btn ghost" value="cancel">Cancelar</button>
+      <button class="btn danger" value="ok" id="cfOk">Eliminar</button>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script type="module" src="../js/admin/main.js"></script>
+</body>
+</html>
