@@ -2,7 +2,7 @@
    La clave PUBLICABLE (sb_publishable_…) está hecha para el navegador: lo que cada quien puede
    leer o escribir lo decide la RLS de la base. NUNCA pongas aquí la clave secreta (sb_secret_…). */
 export const SUPABASE_URL = 'https://ecktnooenujqsxfqfidz.supabase.co';
-export const SUPABASE_PUBLISHABLE_KEY = 'PEGA_AQUI_TU_SB_PUBLISHABLE_KEY';
+export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_lUwljpUa3WrqToOSy-hYZQ_CCTV9wE6';
 
 export const IMAGES_BUCKET = 'product-images';
 
