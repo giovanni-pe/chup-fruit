@@ -110,7 +110,8 @@ export class OrderView {
     h += '<div class="sline tot"><span>' + plural(t.units) + '</span><b>' + money(t.soles) + '</b></div></div>';
     h += '<div class="sumbox"><h4>Entrega <button class="btn-link" type="button" data-goto="2">Cambiar</button></h4><div>' + esc(st.addr.trim()) + '</div>' +
       (st.recv.trim() ? '<div class="muted">Recibe: ' + esc(st.recv.trim()) + '</div>' : '') +
-      (st.pin ? '<a href="https://maps.google.com/?q=' + st.pin[0] + ',' + st.pin[1] + '" target="_blank" rel="noopener">Ver ubicación en el mapa</a>' : '') + '</div>';
+      (st.pin ? '<a href="https://maps.google.com/?q=' + st.pin[0] + ',' + st.pin[1] + '" target="_blank" rel="noopener">Ver ubicación en el mapa</a>' : '') +
+      (model.outOfZone() ? '<div class="zone-warn">Estás fuera de la zona de reparto: al recibir tu pedido te escribiremos para coordinar el envío.</div>' : '') + '</div>';
     const pt = payText({m: st.pay.m, bill: st.pay.bill, cash: st.pay.m === 'efectivo' ? model.cashAmount() : 0}, t.soles);
     h += '<div class="sumbox"><h4>Pago <button class="btn-link" type="button" data-goto="3">Cambiar</button></h4><div>' + esc(pt) + '</div>' +
       (st.pay.m === 'yape' ? '<div class="muted">Envía la captura del Yape por WhatsApp.</div>' : '') + '</div>';

@@ -31,12 +31,17 @@ import { ImagesModel } from './modules/images/images.model.js';
 import { ImagesView } from './modules/images/images.view.js';
 import { ImagesController } from './modules/images/images.controller.js';
 
+import { ZoneRepository } from './modules/zone/zone.repository.js';
+import { ZoneModel } from './modules/zone/zone.model.js';
+import { ZoneView } from './modules/zone/zone.view.js';
+import { ZoneController } from './modules/zone/zone.controller.js';
+
 const ui = {toast: new Toasts(el('toasts')), confirm: confirmAction};
 const authView = new AuthView();
 let catalog = null;       // modelos del catálogo, se crean al primer ingreso
 
 function startCatalog(sb){
-  if(catalog){ catalog.categories.load(); catalog.products.load(); return; }   // volvió a ingresar
+  if(catalog){ catalog.categories.load(); catalog.products.load(); catalog.zone.load(); return; }   // volvió a ingresar
 
   const categories = new CategoriesModel(new CategoriesRepository(sb));
   const products = new ProductsModel(new ProductsRepository(sb));
@@ -48,11 +53,15 @@ function startCatalog(sb){
 
   new CategoriesController(categories, new CategoriesView(), ui).init();
   new ProductsController(products, new ProductsView(), {categories: categories, designer: designer, images: images, toast: ui.toast, confirm: ui.confirm}).init();
-  initShell();
+  const zoneModel = new ZoneModel(new ZoneRepository(sb));
+  const zone = new ZoneController(zoneModel, new ZoneView(), ui);
+  zone.init();
+  initShell(function(view){ if(view === 'zone') zone.show(); });
 
-  catalog = {categories: categories, products: products};
+  catalog = {categories: categories, products: products, zone: zoneModel};
   categories.load();
   products.load();
+  zoneModel.load();
 }
 
 async function main(){

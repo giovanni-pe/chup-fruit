@@ -18,6 +18,7 @@ import { HistoryController } from './modules/history/history.controller.js';
 import { DeliveryModel } from './modules/delivery/delivery.model.js';
 import { DeliveryView } from './modules/delivery/delivery.view.js';
 import { DeliveryController } from './modules/delivery/delivery.controller.js';
+import { SupabaseZoneRepository, ZoneCache } from './modules/delivery/delivery.repository.js';
 
 import { LayoutModel } from './modules/layout/layout.model.js';
 import { LayoutView } from './modules/layout/layout.view.js';
@@ -29,7 +30,10 @@ const catalog = new CatalogModel({
   fallback: new SeedCatalogRepository(),
   cache: new CatalogCache()
 });
-const delivery = new DeliveryModel();
+const delivery = new DeliveryModel({
+  remote: isSupabaseConfigured() ? new SupabaseZoneRepository() : null,
+  cache: new ZoneCache()
+});
 const order = new OrderModel({catalog: catalog, delivery: delivery});
 const history = new HistoryModel();
 
@@ -42,3 +46,4 @@ new OrderController(order, new OrderView(), history).init();
 new HistoryController(history, new HistoryView(), order).init();
 
 catalog.load();
+delivery.load();
