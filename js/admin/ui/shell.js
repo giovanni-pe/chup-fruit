@@ -1,9 +1,10 @@
 import { el } from '../../core/dom.js';
 
-/* Pestañas del panel (Productos / Categorías), recordadas en la URL (#categorias) */
-const VIEWS = {products: 'productos', categories: 'categorias'};
+/* Pestañas del panel (Productos / Categorías / Zona), recordadas en la URL (#categorias, #zona) */
+const VIEWS = {products: 'productos', categories: 'categorias', zone: 'zona'};
 
-export function initShell(){
+/* onShow(vista) avisa al abrir una pestaña (el mapa de Leaflet necesita estar visible para medirse) */
+export function initShell(onShow){
   const tabs = el('tabs');
   const show = function(view){
     tabs.querySelectorAll('button').forEach(function(b){
@@ -11,8 +12,8 @@ export function initShell(){
       b.classList.toggle('sel', on);
       b.setAttribute('aria-selected', on);
     });
-    el('productsView').hidden = view !== 'products';
-    el('categoriesView').hidden = view !== 'categories';
+    Object.keys(VIEWS).forEach(function(v){ el(v + 'View').hidden = v !== view; });
+    if(onShow) onShow(view);
   };
   tabs.addEventListener('click', function(e){
     const b = e.target.closest('button[data-view]');
@@ -20,5 +21,6 @@ export function initShell(){
     show(b.dataset.view);
     history.replaceState(null, '', '#' + VIEWS[b.dataset.view]);
   });
-  show(location.hash === '#categorias' ? 'categories' : 'products');
+  const initial = Object.keys(VIEWS).find(function(v){ return location.hash === '#' + VIEWS[v]; });
+  show(initial || 'products');
 }

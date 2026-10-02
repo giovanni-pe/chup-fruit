@@ -16,6 +16,15 @@ erDiagram
   products ||--o{ product_images : "tiene fotos"
   auth_users ||--o| admins : "es administrador"
 
+  delivery_settings {
+    bool id PK "una sola fila"
+    text zone_name
+    text store_address
+    float store_lat
+    float store_lng
+    int radius_m "200 a 30000"
+  }
+
   categories {
     uuid id PK
     slug_text slug UK
@@ -86,6 +95,7 @@ ya tenía la tienda, con sus diseños originales). Ambos se pueden ejecutar más
 1. **Crear las tablas y cargar los sabores.** En Supabase → *SQL Editor*, ejecuta en orden:
    1. `supabase/migrations/20260930000001_catalog_schema.sql`
    2. `supabase/migrations/20260930000002_seed_catalog.sql`
+   3. `supabase/migrations/20261002000001_delivery_settings.sql` (zona de reparto)
 
    (Con la CLI: `supabase link --project-ref ecktnooenujqsxfqfidz` y `supabase db push`.)
 2. **Conectar la web.** En `js/core/config.js` pega la clave **publicable** (Project Settings → API Keys →
@@ -128,7 +138,7 @@ js/
       catalog/   repository · model · view · controller   (Supabase → caché → respaldo)
       order/     model · view · controller                (pedido en pasos, WhatsApp)
       history/   model · view · controller                (mis pedidos en el dispositivo)
-      delivery/  model · view · controller                (zona de reparto y mapa)
+      delivery/  repository · model · view · controller   (zona de reparto y mapa)
       layout/    model · view · controller                (scroll, menú, animaciones)
   admin/                   PANEL
     main.js
@@ -139,6 +149,7 @@ js/
       products/    repository · model · view · controller (lista + editor)
       designer/    model · view · controller              (diseño 3D con vista previa en vivo)
       images/      repository · model · view · controller (subida a Storage, foto principal)
+      zone/        repository · model · view · controller (zona de reparto en el mapa)
 ```
 
 - **Model**: estado y reglas del negocio, sin DOM. Emite `change` para que el controlador repinte.
@@ -146,6 +157,10 @@ js/
   supabase-js en el celular del cliente; el panel usa supabase-js para Auth, escritura y Storage).
 - **View**: solo pinta y lee el DOM.
 - **Controller**: conecta eventos del usuario con el modelo y la vista.
+
+**Zona de reparto:** se configura en el panel (pestaña *Zona*: pin de la tienda, radio, nombre y dirección). Un pedido
+con ubicación fuera del círculo **no se bloquea**: el cliente ve un aviso y el mensaje de WhatsApp indica que hay que
+coordinar el envío (con la distancia a la tienda).
 
 La tienda guarda en `localStorage` la última respuesta buena de Supabase: en las visitas siguientes pinta al instante y
 revalida en segundo plano.

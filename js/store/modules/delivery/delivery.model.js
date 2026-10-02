@@ -1,9 +1,39 @@
-/* Zona de reparto: se usa en el mapa de cobertura y para validar la ubicación del pedido */
-export const ZONA = {base: [-9.3064229, -75.9996039], r: 1500};   // tienda CHUP Fruit (Bella Durmiente), 1.5 km
-const TOLERANCIA = 80;                                             // metros de gracia en el borde
+import { Emitter } from '../../../core/emitter.js';
+import { DEFAULT_ZONE, toZone } from '../../../shared/delivery/delivery.entities.js';
 
-export class DeliveryModel {
-  constructor(zone){ this.zone = zone || ZONA; }
+const TOLERANCIA = 80;               // metros de gracia en el borde
+
+/* Zona de reparto (configurable en el panel). Estar fuera NO bloquea el pedido:
+   solo se avisa al cliente y a la tienda para coordinar el envío. */
+export class DeliveryModel extends Emitter {
+  constructor(deps){
+    super();
+    deps = deps || {};
+    this.remote = deps.remote || null;     // SupabaseZoneRepository | null
+    this.cache = deps.cache || null;       // ZoneCache
+    this.zone = Object.assign({}, DEFAULT_ZONE);
+  }
+
+  get base(){ return [this.zone.lat, this.zone.lng]; }
+
+  async load(){
+    const cached = this.cache && this.cache.read();
+    if(cached) this._apply(cached);
+    if(!this.remote) return;
+    try{
+      const row = await this.remote.fetch();
+      if(!row) return;
+      if(this.cache) this.cache.write(row);
+      if(JSON.stringify(row) !== JSON.stringify(cached)) this._apply(row);
+    }catch(err){
+      console.warn('[zona] no se pudo leer de Supabase; uso la zona guardada.', err);
+    }
+  }
+
+  _apply(row){
+    this.zone = toZone(row);
+    this.emit('change', this.zone);
+  }
 
   /* distancia en metros (haversine) */
   distance(a, b){
@@ -13,7 +43,8 @@ export class DeliveryModel {
     return 2 * R * Math.asin(Math.sqrt(h));
   }
 
-  inZone(pin){ return !!pin && this.distance(pin, this.zone.base) <= this.zone.r + TOLERANCIA; }
+  distanceFromStore(pin){ return pin ? this.distance(pin, this.base) : 0; }
+  inZone(pin){ return !!pin && this.distanceFromStore(pin) <= this.zone.radius + TOLERANCIA; }
 
   /* Leaflet viene de un CDN: si no carga, el pedido sigue sin mapa */
   hasMap(){ return typeof window.L !== 'undefined'; }

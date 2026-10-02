@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="../css/tokens.css">
 <link rel="stylesheet" href="../css/popsicle.css">
 <link rel="stylesheet" href="../css/admin.css">
@@ -50,6 +51,7 @@
     <nav class="tabs" id="tabs" role="tablist" aria-label="Secciones">
       <button type="button" role="tab" data-view="products" class="sel">Productos</button>
       <button type="button" role="tab" data-view="categories">Categorías</button>
+      <button type="button" role="tab" data-view="zone">Zona</button>
     </nav>
     <div class="user">
       <span class="who" id="userEmail"></span>
@@ -82,6 +84,39 @@
       <button class="btn primary" id="newCategory" type="button">+ Nueva categoría</button>
     </div>
     <div class="rows" id="categoriesList"></div>
+  </section>
+
+  <section class="view" id="zoneView" hidden>
+    <div class="view-head">
+      <div>
+        <h1>Zona de reparto</h1>
+        <p class="muted">Toca el mapa o arrastra el pin para ubicar la tienda y ajusta el radio. Los pedidos de fuera del círculo llegan igual, marcados para coordinar el envío.</p>
+      </div>
+    </div>
+    <form class="zone-grid" id="zoneForm" novalidate>
+      <div class="zone-map"><div id="zoneMap" role="application" aria-label="Mapa de la zona de reparto"></div></div>
+      <div class="zone-fields">
+        <label class="fld"><span>Nombre de la zona <em class="req">obligatorio</em></span>
+          <input id="zName" maxlength="60" placeholder="Ej. Tingo María centro">
+          <small class="err" data-err="name"></small></label>
+        <label class="fld"><span>Dirección de la tienda <em class="req">obligatorio</em></span>
+          <input id="zAddress" maxlength="120" placeholder="Ej. Jr. 28 de Marzo 245, Bella Durmiente">
+          <small class="err" data-err="address"></small></label>
+        <label class="fld range"><span>Radio de reparto <b id="zRadiusOut">1.5 km</b></span>
+          <input type="range" id="zRadius" min="200" max="10000" step="100">
+          <small class="err" data-err="radius"></small></label>
+        <div class="fld-row">
+          <label class="fld"><span>Latitud</span><input id="zLat" inputmode="decimal" spellcheck="false"><small class="err" data-err="lat"></small></label>
+          <label class="fld"><span>Longitud</span><input id="zLng" inputmode="decimal" spellcheck="false"><small class="err" data-err="lng"></small></label>
+        </div>
+        <button class="btn ghost sm" type="button" id="zLocate">Usar mi ubicación actual</button>
+        <p class="form-error" id="zError" role="alert"></p>
+        <div class="zone-actions">
+          <button class="btn ghost" type="button" id="zReset">Deshacer cambios</button>
+          <button class="btn primary" type="submit" id="zSave">Guardar zona</button>
+        </div>
+      </div>
+    </form>
   </section>
 </div>
 
@@ -265,6 +300,7 @@
 
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="module" src="../js/admin/main.js"></script>
 </body>
 </html>

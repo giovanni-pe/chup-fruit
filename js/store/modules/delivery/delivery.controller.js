@@ -1,6 +1,7 @@
 import { el } from '../../../core/dom.js';
+import { formatDistance } from '../../../shared/delivery/delivery.entities.js';
 
-/* Cobertura, ubicación por GPS o tocando el mapa, y aviso si queda fuera de la zona */
+/* Cobertura, ubicación por GPS o tocando el mapa, y aviso (sin bloquear) si queda fuera de la zona */
 export class DeliveryController {
   constructor(model, view, order){
     this.model = model;
@@ -9,7 +10,14 @@ export class DeliveryController {
   }
 
   init(){
-    if(this.model.hasMap()) this.view.renderCoverage(this.model.zone);
+    const draw = () => {
+      this.view.renderTexts(this.model.zone);
+      if(this.model.hasMap()) this.view.renderCoverage(this.model.zone);
+      this.view.updatePickZone(this.model.zone);
+      this.syncMessage();
+    };
+    this.model.on('change', draw);
+    draw();
 
     this.order.on('step', (step) => {
       if(step !== 2) return;
@@ -18,15 +26,20 @@ export class DeliveryController {
         this.view.placeMarker(this.order.st.pin, false);
       }, 30);
     });
-
-    this.order.on('change', () => {
-      const pin = this.order.st.pin;
-      if(this.order.st.step !== 2 || !pin) return;
-      const ok = this.model.inZone(pin);
-      this.view.locMessage(ok ? '✓ Ubicación dentro de la zona de reparto.' : 'Esta ubicación está fuera de Tingo María centro.', ok ? 'ok' : 'bad');
-    });
+    this.order.on('change', () => this.syncMessage());
 
     el('gpsBtn').addEventListener('click', () => this.locate());
+  }
+
+  syncMessage(){
+    const pin = this.order.st.pin;
+    if(this.order.st.step !== 2 || !pin) return;
+    if(this.model.inZone(pin)){
+      this.view.locMessage('✓ Ubicación dentro de la zona de reparto.', 'ok');
+      return;
+    }
+    this.view.locMessage('Estás fuera de ' + this.model.zone.name + ' (a ' + formatDistance(this.model.distanceFromStore(pin)) +
+      ' de la tienda). Igual puedes enviar tu pedido: te escribiremos para coordinar el envío.', 'warn');
   }
 
   pick(pin, pan){

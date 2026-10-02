@@ -6,7 +6,7 @@ import { SEED_PRODUCTS } from '../../../shared/catalog/catalog.seed.js';
 /* ---------- Reglas del negocio ---------- */
 export const TEL = '51939617373';
 export const YAPE = '939 617 373';
-export const MIN = 5;                                   // pedido mínimo en Tingo María centro
+export const MIN = 5;                                   // pedido mínimo
 export const BILL_VALUES = ['10', '20', '50', '100', '200'];
 const LS_DRAFT = 'chup_borrador';
 
@@ -37,6 +37,7 @@ export function messageFor(o){
   msg += '\nEntrega: ' + o.addr;
   if(o.recv) msg += '\nRecibe: ' + o.recv;
   if(o.pin) msg += '\nUbicación: https://maps.google.com/?q=' + o.pin[0].toFixed(6) + ',' + o.pin[1].toFixed(6);
+  if(o.outOfZone) msg += '\n⚠️ Fuera de la zona de reparto' + (o.distanceKm ? ' (a ' + o.distanceKm.toFixed(1) + ' km de la tienda)' : '') + ': coordinemos el envío.';
   if(o.note) msg += '\nNota: ' + o.note;
   msg += '\nPago: ' + (payText(o.pay, o.total) || 'Yape al ' + YAPE);
   if(o.pay && o.pay.m === 'yape') msg += '\n(Envío la captura del Yape por aquí)';
@@ -127,7 +128,6 @@ export class OrderModel extends Emitter {
     }
     if(step === 2){
       if(dz.hasMap() && !st.pin) return 'Marca tu ubicación en el mapa o usa tu GPS.';
-      if(st.pin && !dz.inZone(st.pin)) return 'Tu ubicación está fuera de Tingo María centro.';
       if(st.addr.trim().length < 5) return 'Escribe tu dirección y una referencia.';
     }
     if(step === 3){
@@ -146,6 +146,9 @@ export class OrderModel extends Emitter {
     for(let k = 1; k <= 3; k++){ if(this.stepProblem(k)) return k; }
     return 0;
   }
+
+  /* fuera de la zona no se bloquea: se avisa para coordinar el envío */
+  outOfZone(){ return !!this.st.pin && !this.delivery.inZone(this.st.pin); }
 
   /* ----- cambios del carrito ----- */
   setQty(id, delta, k){
@@ -237,6 +240,7 @@ export class OrderModel extends Emitter {
         })
       })),
       addr: st.addr.trim(), recv: st.recv.trim(), pin: st.pin, note: st.note.trim(), units: t.units, total: t.soles,
+      outOfZone: this.outOfZone(), distanceKm: st.pin ? this.delivery.distanceFromStore(st.pin) / 1000 : 0,
       pay: {m: st.pay.m, bill: st.pay.bill, cash: st.pay.m === 'efectivo' ? this.cashAmount() : 0}
     };
   }
