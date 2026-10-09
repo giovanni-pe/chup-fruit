@@ -479,7 +479,23 @@ button.wa-btn{border:0;cursor:pointer;font-family:"Manrope",sans-serif}
 /* paso 2: ubicación */
 .pickmap{height:220px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#f3e9e2}
 .pickmap.nomap{display:none}
-.pickmap.need{border:2px solid #d0312d;box-shadow:0 0 0 4px rgba(208,49,45,.15);animation:nudge .4s ease}
+.mapwarn[hidden],.maptip[hidden]{display:none}
+.mapbox{position:relative}
+/* guía parpadeante mientras falta marcar el domicilio */
+.pickmap.guide{border:2px solid var(--fresa);animation:mapGlow 1.4s ease-in-out infinite}
+.maptip{position:absolute;inset:0;z-index:500;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.maptip .tap{position:relative;width:22px;height:22px}
+.maptip .tap b{position:absolute;inset:0;border-radius:50%;background:var(--fresa);box-shadow:0 0 0 3px #fff;animation:tapBlink 1.4s ease-in-out infinite}
+.maptip .tap i{position:absolute;inset:0;border-radius:50%;border:3px solid var(--fresa);animation:tapRing 1.4s ease-out infinite}
+.maptip .tap i+i{animation-delay:.7s}
+.maptip .tiptxt{background:var(--fresa);color:#fff;font-weight:800;font-size:13px;padding:6px 12px;border-radius:999px;box-shadow:0 6px 16px -6px rgba(239,47,104,.8);animation:tapBlink 1.4s ease-in-out infinite}
+#gpsBtn.guide{border-color:var(--fresa);color:var(--fresa);animation:btnPulse 1.4s ease-in-out infinite}
+@keyframes mapGlow{0%,100%{box-shadow:0 0 0 0 rgba(239,47,104,.5)}50%{box-shadow:0 0 0 7px rgba(239,47,104,.18)}}
+@keyframes tapRing{from{transform:scale(1);opacity:.9}to{transform:scale(3.4);opacity:0}}
+@keyframes tapBlink{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,47,104,.45)}50%{box-shadow:0 0 0 6px rgba(239,47,104,0)}}
+@media(prefers-reduced-motion:reduce){.pickmap.guide,.maptip .tap b,.maptip .tap i,.maptip .tiptxt,#gpsBtn.guide{animation:none}}
+.pickmap.need{border:2px solid #d0312d;box-shadow:0 0 0 4px rgba(208,49,45,.15);animation:nudge .4s ease,mapGlow 1.4s ease-in-out .4s infinite}
 .mapwarn{display:flex;gap:10px;align-items:flex-start;background:#fdecec;color:#8f1d1a;border:1px solid #f3b8b6;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:13.5px;line-height:1.4}
 .mapwarn svg{width:20px;height:20px;flex:none;color:#d0312d;margin-top:1px}
 .btn-main.blocked,.btn-main.blocked:hover{background:var(--ink);opacity:.35;cursor:not-allowed;transform:none}

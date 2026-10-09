@@ -193,6 +193,7 @@ export class OrderView {
     el('nextBtn').classList.toggle('blocked', !!prob);
     el('nextBtn').setAttribute('aria-disabled', prob ? 'true' : 'false');
     if(model.st.pin) this.mapWarning(false);
+    this.mapGuide(step === 2 && model.needsPin());
     el('nextBtn').innerHTML = ({1: 'Siguiente: entrega', 2: 'Siguiente: pago', 3: 'Revisar mi pedido'}[step] || 'Continuar') + ' <span aria-hidden="true">→</span>';
   }
 
@@ -219,6 +220,13 @@ export class OrderView {
   }
 
   scrollTop(){ el('drBody').scrollTop = 0; }
+
+  /* animación que invita a marcar el domicilio mientras falta el punto */
+  mapGuide(on){
+    el('pickMap').classList.toggle('guide', on);
+    el('gpsBtn').classList.toggle('guide', on);
+    el('mapTip').hidden = !on;
+  }
 
   /* aviso visible cuando falta marcar el domicilio en el mapa */
   mapWarning(show){
