@@ -479,6 +479,12 @@ button.wa-btn{border:0;cursor:pointer;font-family:"Manrope",sans-serif}
 /* paso 2: ubicación */
 .pickmap{height:220px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#f3e9e2}
 .pickmap.nomap{display:none}
+.pickmap.need{border:2px solid #d0312d;box-shadow:0 0 0 4px rgba(208,49,45,.15);animation:nudge .4s ease}
+.mapwarn{display:flex;gap:10px;align-items:flex-start;background:#fdecec;color:#8f1d1a;border:1px solid #f3b8b6;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:13.5px;line-height:1.4}
+.mapwarn svg{width:20px;height:20px;flex:none;color:#d0312d;margin-top:1px}
+.btn-main.blocked,.btn-main.blocked:hover{background:var(--ink);opacity:.35;cursor:not-allowed;transform:none}
+@keyframes nudge{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media(prefers-reduced-motion:reduce){.pickmap.need{animation:none}}
 .locrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 6px}
 .locmsg{font-size:13px;color:var(--ink-2);flex:1;min-width:160px}
 .locmsg.ok{color:#128a44;font-weight:700}

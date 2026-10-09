@@ -124,16 +124,21 @@ export class OrderController {
 
   finish(send){
     const k = this.model.firstProblemStep();
-    if(k){ this.model.go(k); return; }
+    if(k){ this.model.go(k); this.warn(k); return; }
     const o = this.model.finish(send);
     this.history.add(o);
     if(send) openExternal(messageFor(o));
     this.view.renderDone(o, send);
   }
 
+  /* al intentar avanzar con un paso incompleto: si falta el domicilio en el mapa, aviso destacado */
+  warn(step){
+    if(step === 2 && this.model.needsPin()) this.view.mapWarning(true);
+  }
+
   bindNavigation(){
     const m = this.model;
-    el('nextBtn').addEventListener('click', () => { if(!m.stepProblem(m.st.step)) m.go(m.st.step + 1); });
+    el('nextBtn').addEventListener('click', () => { if(m.stepProblem(m.st.step)) this.warn(m.st.step); else m.go(m.st.step + 1); });
     el('backBtn').addEventListener('click', () => m.go(Math.max(1, m.st.step - 1)));
     el('sendWa').addEventListener('click', () => this.finish(true));
     el('saveOnly').addEventListener('click', () => this.finish(false));

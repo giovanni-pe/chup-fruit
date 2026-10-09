@@ -117,7 +117,7 @@ export class OrderModel extends Emitter {
 
   /* ----- validaciones por paso ----- */
   stepProblem(step){
-    const st = this.st, t = this.totals(), dz = this.delivery;
+    const st = this.st, t = this.totals();
     if(step === 1){
       if(t.units === 0) return 'Agrega tus sabores desde el catálogo.';
       if(st.mode === 'persona'){
@@ -127,7 +127,7 @@ export class OrderModel extends Emitter {
       if(t.units < MIN){ const f = MIN - t.units; return 'Agrega ' + f + (f === 1 ? ' unidad más' : ' unidades más') + ' para el pedido mínimo de ' + MIN + '.'; }
     }
     if(step === 2){
-      if(dz.hasMap() && !st.pin) return 'Marca tu ubicación en el mapa o usa tu GPS.';
+      if(this.needsPin()) return 'Marca tu ubicación en el mapa o usa tu GPS.';
       if(st.addr.trim().length < 5) return 'Escribe tu dirección y una referencia.';
     }
     if(step === 3){
@@ -141,6 +141,8 @@ export class OrderModel extends Emitter {
     }
     return '';
   }
+
+  needsPin(){ return this.delivery.hasMap() && !this.st.pin; }
 
   firstProblemStep(){
     for(let k = 1; k <= 3; k++){ if(this.stepProblem(k)) return k; }

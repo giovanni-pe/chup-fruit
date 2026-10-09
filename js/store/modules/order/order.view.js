@@ -190,7 +190,9 @@ export class OrderView {
     const step = model.st.step;
     const prob = step <= 3 ? model.stepProblem(step) : '';
     el('drHint').textContent = prob;
-    el('nextBtn').disabled = !!prob;
+    el('nextBtn').classList.toggle('blocked', !!prob);
+    el('nextBtn').setAttribute('aria-disabled', prob ? 'true' : 'false');
+    if(model.st.pin) this.mapWarning(false);
     el('nextBtn').innerHTML = ({1: 'Siguiente: entrega', 2: 'Siguiente: pago', 3: 'Revisar mi pedido'}[step] || 'Continuar') + ' <span aria-hidden="true">→</span>';
   }
 
@@ -217,6 +219,17 @@ export class OrderView {
   }
 
   scrollTop(){ el('drBody').scrollTop = 0; }
+
+  /* aviso visible cuando falta marcar el domicilio en el mapa */
+  mapWarning(show){
+    const w = el('mapWarn'), map = el('pickMap');
+    w.hidden = !show;
+    map.classList.remove('need');
+    if(!show) return;
+    void map.offsetWidth;   // reinicia la animación si ya se mostró
+    map.classList.add('need');
+    w.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
 
   openModal(name){
     el('mName').value = name;
