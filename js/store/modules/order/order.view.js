@@ -2,7 +2,7 @@ import { el, esc, money, plural, bump } from '../../../core/dom.js';
 import { MIN, YAPE, BILL_VALUES, personLabel, payText } from './order.model.js';
 
 const AV_COLORS = ['#ef2f68','#ff9a1f','#8a3fa8','#1a9e6e','#1a7fc4','#c2410c','#be185d'];
-const BILL_COLORS = {'10': '#2e9e5b', '20': '#c77d2e', '50': '#d9534f', '100': '#2f6fb3', '200': '#8a3fa8'};
+const BILL_COLORS = {'10': '#2e9e5b', '20': '#c77d2e', '50': '#d9534f'};
 const ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 const ICON_DEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>';
 

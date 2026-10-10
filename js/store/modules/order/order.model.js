@@ -7,7 +7,7 @@ import { SEED_PRODUCTS } from '../../../shared/catalog/catalog.seed.js';
 export const TEL = '51939617373';
 export const YAPE = '939 617 373';
 export const MIN = 5;                                   // pedido mínimo
-export const BILL_VALUES = ['10', '20', '50', '100', '200'];
+export const BILL_VALUES = ['10', '20', '50'];
 const LS_DRAFT = 'chup_borrador';
 
 const blankPerson = function(){ return {name: '', items: {}}; };
