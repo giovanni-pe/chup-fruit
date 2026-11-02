@@ -51,11 +51,21 @@ export function toProduct(r){
     displayMode: r.display_mode === 'image' ? 'image' : 'design',
     featuredRank: r.featured_rank == null ? null : Number(r.featured_rank),
     isActive: r.is_active !== false, sortOrder: r.sort_order || 0,
+    stock: r.stock == null ? null : Number(r.stock),                 // null = sin control de stock
+    publishAt: r.publish_at || null,                                 // ISO; null = publicado de inmediato
     design: toDesign(one(r.design)),
     images: images,
     primaryImage: images[0] || null
   };
 }
+
+/* ¿Ya llegó su fecha de publicación? */
+export function isPublished(product, now){
+  return !product.publishAt || new Date(product.publishAt).getTime() <= (now || Date.now());
+}
+
+/* ¿Se puede pedir? (sin control de stock, o con unidades disponibles) */
+export function inStock(product){ return product.stock == null || product.stock > 0; }
 
 /* ¿La tienda muestra la foto o el chupete 3D? */
 export function showsPhoto(product){
@@ -79,7 +89,9 @@ export function productToRow(p){
     price: Math.round(Number(p.price) * 100) / 100,
     is_adult: !!p.isAdult, display_mode: p.displayMode === 'image' ? 'image' : 'design',
     featured_rank: p.featuredRank ? Number(p.featuredRank) : null,
-    is_active: !!p.isActive, sort_order: p.sortOrder | 0
+    is_active: !!p.isActive, sort_order: p.sortOrder | 0,
+    stock: p.stock === '' || p.stock == null ? null : Math.max(0, parseInt(p.stock, 10) || 0),
+    publish_at: p.publishAt ? new Date(p.publishAt).toISOString() : null
   };
 }
 

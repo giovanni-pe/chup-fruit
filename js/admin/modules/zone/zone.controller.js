@@ -26,6 +26,7 @@ export class ZoneController {
       const t = e.target;
       if(t.id === 'zName') m.set({name: t.value}, t.id);
       else if(t.id === 'zAddress') m.set({address: t.value}, t.id);
+      else if(t.id === 'zMinOrder') m.set({minOrder: t.value === '' ? NaN : +t.value}, t.id);
       else if(t.id === 'zRadius') m.set({radius: +t.value}, t.id);
       else if(t.id === 'zLat' || t.id === 'zLng'){
         const r = v.read();
@@ -52,7 +53,7 @@ export class ZoneController {
     this.view.busy(true);
     try{
       await this.model.save();
-      this.toast.ok('Zona de reparto guardada. La tienda ya usa el nuevo mapa.');
+      this.toast.ok('Zona y pedido mínimo guardados. La tienda ya los usa.');
     }catch(err){
       this.view.state(true, friendlyError(err));
     }finally{

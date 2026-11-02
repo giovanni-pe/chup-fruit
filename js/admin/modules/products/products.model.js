@@ -49,7 +49,7 @@ export class ProductsModel extends Emitter {
   blank(categoryId){
     const last = this.items.reduce(function(m, p){ return Math.max(m, p.sortOrder); }, 0);
     return {id: null, categoryId: categoryId || '', slug: '', name: '', description: '', price: 2, isAdult: false,
-      displayMode: 'design', featuredRank: null, isActive: true, sortOrder: last + 10,
+      displayMode: 'design', featuredRank: null, isActive: true, sortOrder: last + 10, stock: null, publishAt: null,
       design: Object.assign({}, DEFAULT_DESIGN), images: [], primaryImage: null};
   }
 
@@ -63,6 +63,8 @@ export class ProductsModel extends Emitter {
     const price = Number(p.price);
     if(p.price === '' || !isFinite(price) || price < 0 || price > 9999) e.price = 'Escribe un precio entre 0 y 9999.';
     if((p.description || '').length > 500) e.description = 'Máximo 500 caracteres.';
+    if(p.stock !== '' && p.stock != null && !/^\d{1,5}$/.test(String(p.stock).trim())) e.stock = 'Escribe un número entero entre 0 y 99999, o déjalo vacío.';
+    if(p.publishAt && isNaN(new Date(p.publishAt).getTime())) e.publishAt = 'Fecha inválida.';
     return e;
   }
 
@@ -82,8 +84,12 @@ export class ProductsModel extends Emitter {
       other.featuredRank = null;
     }
     let id = p.id;
-    if(id) await this.repo.update(id, productToRow(p));
-    else id = await this.repo.create(productToRow(p));
+    const row = productToRow(p);
+    /* si no se tocó el stock, no se envía: los pedidos que entraron mientras se editaba no se pisan */
+    const before = id && this.get(id);
+    if(before && String(before.stock == null ? '' : before.stock) === String(p.stock == null ? '' : p.stock).trim()) delete row.stock;
+    if(id) await this.repo.update(id, row);
+    else id = await this.repo.create(row);
     try{
       await this.repo.saveDesign(id, designToRow(design));
     }catch(err){

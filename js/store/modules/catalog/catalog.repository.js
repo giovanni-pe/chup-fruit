@@ -6,7 +6,7 @@ import { SEED_CATEGORIES, SEED_PRODUCTS } from '../../../shared/catalog/catalog.
    fetch() -> Promise<{categories: fila[], products: fila[]}> */
 
 const CATEGORY_FIELDS = 'id,slug,name,card_label,description,badge,sort_order,is_active';
-const PRODUCT_FIELDS = 'id,category_id,slug,name,description,price,is_adult,display_mode,featured_rank,sort_order,is_active,' +
+const PRODUCT_FIELDS = 'id,category_id,slug,name,description,price,is_adult,display_mode,featured_rank,sort_order,is_active,stock,publish_at,' +
   'design:product_designs(color_top,color_bottom,color_edge,speck_color,speck_count,speck_light,coating_color,label_line1,label_line2),' +
   'images:product_images(id,storage_path,external_url,alt_text,is_primary,sort_order)';
 

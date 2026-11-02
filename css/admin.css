@@ -267,3 +267,7 @@ dialog[open]{animation:dlgIn .25s cubic-bezier(.22,1,.36,1)}
   .ed-foot .form-error{flex-basis:100%}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+.badge.stock{background:#1a9e6e}
+.badge.low{background:#c77d2e}
+.badge.out{background:#6b5a63}
+.badge.sched{background:#8a3fa8}

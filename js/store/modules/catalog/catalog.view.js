@@ -3,6 +3,13 @@ import { buildProductVisual } from '../../../shared/popsicle/popsicle.view.js';
 
 const STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>';
 
+const LOW_STOCK = 10;                  // desde cuántas unidades se avisa «Quedan N»
+
+function stockBadge(p){
+  if(p.stock == null || p.stock > LOW_STOCK) return '';
+  return '<span class="stock">' + (p.stock === 0 ? 'Agotado' : 'Quedan ' + p.stock) + '</span>';
+}
+
 /* Pinta el catálogo: mostrador de la portada, filtros, tarjetas, cinta y cifras */
 export class CatalogView {
   constructor(){
@@ -55,7 +62,7 @@ export class CatalogView {
     const cards = model.products.map((p, i) => {
       const cat = model.categoryOf(p);
       const card = document.createElement('article');
-      card.className = 'fcard rv';
+      card.className = 'fcard rv' + (p.stock === 0 ? ' soldout' : '');
       card.dataset.t = cat ? cat.slug : '';
       card.dataset.id = p.id;
       card.style.setProperty('--acc', p.design.colorBottom);
@@ -70,8 +77,10 @@ export class CatalogView {
         (cat ? '<span class="tag">' + esc(cat.cardLabel) + '</span>' : '') +
         '<h3>' + name + '</h3>' +
         (p.description ? '<p class="desc">' + esc(p.description) + '</p>' : '') +
-        '<div class="price">' + money(p.price) + '</div>' +
-        '<button type="button" class="addbtn" data-add="' + id + '" aria-label="Agregar ' + name + '">+ Agregar</button>' +
+        '<div class="price">' + money(p.price) + '</div>' + stockBadge(p) +
+        (p.stock === 0
+          ? '<button type="button" class="addbtn" disabled>Agotado</button>'
+          : '<button type="button" class="addbtn" data-add="' + id + '" aria-label="Agregar ' + name + '">+ Agregar</button>') +
         '<div class="qty" data-i="' + id + '">' +
           '<button type="button" data-d="-1" aria-label="Quitar uno de ' + name + '" disabled>−</button>' +
           '<span class="n">0</span>' +
@@ -121,12 +130,13 @@ export class CatalogView {
     });
   }
 
-  /* cantidades de la persona activa en cada tarjeta */
-  syncQuantities(items){
+  /* cantidades de la persona activa en cada tarjeta; remaining(id): cuántas más se pueden agregar */
+  syncQuantities(items, remaining){
     this.grid.querySelectorAll('.qty[data-i]').forEach(function(box){
       const q = items[box.dataset.i] || 0;
       box.querySelector('.n').textContent = q;
       box.querySelector('[data-d="-1"]').disabled = q === 0;
+      if(remaining) box.querySelector('[data-d="1"]').disabled = remaining(box.dataset.i) < 1;
       box.closest('.fcard').classList.toggle('on', q > 0);
     });
   }

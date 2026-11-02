@@ -17,3 +17,22 @@ export async function restSelect(table, query, options){
     clearTimeout(timer);
   }
 }
+
+/* Llama a una función de la base (RPC) por la Data API. La función decide qué puede hacer "anon". */
+export async function restRpc(name, args, options){
+  const timeout = (options && options.timeout) || 8000;
+  const ctrl = new AbortController();
+  const timer = setTimeout(function(){ ctrl.abort(); }, timeout);
+  try{
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
+      method: 'POST',
+      headers: {apikey: SUPABASE_PUBLISHABLE_KEY, 'Content-Type': 'application/json', Accept: 'application/json'},
+      body: JSON.stringify(args || {}),
+      signal: ctrl.signal
+    });
+    if(!res.ok) throw new Error('Supabase ' + res.status + ' en ' + name + ': ' + (await res.text()).slice(0, 200));
+    return await res.json();
+  }finally{
+    clearTimeout(timer);
+  }
+}

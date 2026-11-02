@@ -13,9 +13,9 @@ export class DeliveryView {
     this.pickCircle = null;
   }
 
-  /* textos de la página con la zona configurada: [data-zone="name|address|radius"] */
+  /* textos de la página con la zona configurada: [data-zone="name|address|radius|min"] */
   renderTexts(zone){
-    const values = {name: zone.name, address: zone.address, radius: formatDistance(zone.radius)};
+    const values = {name: zone.name, address: zone.address, radius: formatDistance(zone.radius), min: zone.minOrder};
     document.querySelectorAll('[data-zone]').forEach(function(n){
       if(values[n.dataset.zone] != null) n.textContent = values[n.dataset.zone];
     });
@@ -36,7 +36,7 @@ export class DeliveryView {
     this.layers.clearLayers();
 
     L.circle(BASE, {radius: R, color: '#ef2f68', weight: 2.5, fillColor: '#ef2f68', fillOpacity: .14})
-      .addTo(this.layers).bindPopup('<b>' + esc(zone.name) + '</b><br>Pedido mínimo: 5 unidades');
+      .addTo(this.layers).bindPopup('<b>' + esc(zone.name) + '</b><br>Pedido mínimo: ' + zone.minOrder + (zone.minOrder === 1 ? ' unidad' : ' unidades'));
 
     /* lo que queda fuera del círculo se sombrea: polígono grande con el círculo como hueco */
     const hole = [], kLat = R / 111320, kLng = kLat / Math.cos(BASE[0] * Math.PI / 180);

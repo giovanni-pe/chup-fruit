@@ -6,12 +6,14 @@ export const DEFAULT_ZONE = Object.freeze({
   address: 'Jr. 28 de Marzo 245, Bella Durmiente',
   lat: -9.3064229,
   lng: -75.9996039,
-  radius: 1500                       // metros
+  radius: 1500,                      // metros
+  minOrder: 5                        // pedido mínimo en unidades
 });
 
 export function toZone(r){
   if(!r) return Object.assign({}, DEFAULT_ZONE);
-  return {name: r.zone_name, address: r.store_address, lat: Number(r.store_lat), lng: Number(r.store_lng), radius: Number(r.radius_m)};
+  return {name: r.zone_name, address: r.store_address, lat: Number(r.store_lat), lng: Number(r.store_lng), radius: Number(r.radius_m),
+    minOrder: r.min_order_units == null ? DEFAULT_ZONE.minOrder : Number(r.min_order_units)};
 }
 
 export function zoneToRow(z){
@@ -19,7 +21,8 @@ export function zoneToRow(z){
     id: true,
     zone_name: z.name.trim(), store_address: z.address.trim(),
     store_lat: +Number(z.lat).toFixed(7), store_lng: +Number(z.lng).toFixed(7),
-    radius_m: Math.round(Number(z.radius))
+    radius_m: Math.round(Number(z.radius)),
+    min_order_units: Math.round(Number(z.minOrder))
   };
 }
 

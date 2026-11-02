@@ -1,4 +1,4 @@
-import { el, openExternal } from '../../../core/dom.js';
+import { el, openLater, plural } from '../../../core/dom.js';
 import { personLabel, messageFor } from './order.model.js';
 
 /* Eventos del pedido: carrito (catálogo, panel y modal), pasos, pago y envío por WhatsApp */
@@ -15,7 +15,12 @@ export class OrderController {
     this.model.on('change', () => this.render());
     this.model.on('step', () => this.view.scrollTop());
     this.model.on('repeat', () => this.view.tab('pedido'));
+    this.model.on('limit', (p) => {
+      const n = p.stock || 0;
+      this.view.toast(p, '', n ? 'Solo hay ' + plural(n) + ' de ' + p.name : p.name + ' está agotado');
+    });
     this.model.catalog.on('change', () => this.model.prune());
+    this.model.delivery.on('change', () => this.render());      // el pedido mínimo viene de la zona
 
     document.addEventListener('click', (e) => this.onClick(e));
     this.bindInputs();
@@ -122,13 +127,29 @@ export class OrderController {
     if(this.model.st.step === 5) this.model.go(1); else this.render();
   }
 
-  finish(send){
+  async finish(send){
+    if(this.sending) return;
     const k = this.model.firstProblemStep();
     if(k){ this.model.go(k); this.warn(k); return; }
-    const o = this.model.finish(send);
+    if(send){
+      /* primero se descuenta el stock en la base; si ya no alcanza, no se envía */
+      const tab = openLater();
+      this.sending = true;
+      this.view.sending(true);
+      let res;
+      try{ res = await this.model.reserve(); }
+      finally{ this.sending = false; this.view.sending(false); }
+      if(!res.ok){ tab.cancel(); this.view.stockError(res.message); return; }
+      const o = this.model.finish(true, res.unconfirmed ? {stockUnconfirmed: true} : null);
+      this.history.add(o);
+      tab.go(messageFor(o));
+      this.view.renderDone(o, true);
+      this.model.catalog.refresh();          // stock al día para el próximo pedido
+      return;
+    }
+    const o = this.model.finish(false);
     this.history.add(o);
-    if(send) openExternal(messageFor(o));
-    this.view.renderDone(o, send);
+    this.view.renderDone(o, false);
   }
 
   /* al intentar avanzar con un paso incompleto: si falta el domicilio en el mapa, aviso destacado */

@@ -1,5 +1,5 @@
 import { el, esc, money, plural, bump } from '../../../core/dom.js';
-import { MIN, YAPE, BILL_VALUES, personLabel, payText } from './order.model.js';
+import { YAPE, BILL_VALUES, personLabel, payText } from './order.model.js';
 
 const AV_COLORS = ['#ef2f68','#ff9a1f','#8a3fa8','#1a9e6e','#1a7fc4','#c2410c','#be185d'];
 const BILL_COLORS = {'10': '#2e9e5b', '20': '#c77d2e', '50': '#d9534f'};
@@ -177,8 +177,9 @@ export class OrderView {
     this.renderHint(model);
 
     /* progreso hacia el mínimo en la barra inferior */
-    const falta = Math.max(0, MIN - t.units);
-    el('minFill').style.width = Math.min(100, t.units / MIN * 100) + '%';
+    const min = model.minOrder();
+    const falta = Math.max(0, min - t.units);
+    el('minFill').style.width = Math.min(100, t.units / min * 100) + '%';
     el('minFill').parentElement.classList.toggle('full', !falta);
     el('minMsg').textContent = falta ? 'Te ' + (falta === 1 ? 'falta 1 unidad' : 'faltan ' + falta + ' unidades') + ' para el mínimo' : '¡Listo! Ya puedes hacer tu pedido';
     el('minMsg').classList.toggle('ok', !falta);
@@ -252,13 +253,29 @@ export class OrderView {
   }
 
   /* ----- avisos ----- */
-  toast(product, who){
+  toast(product, who, text){
     const t = el('toast');
     t.style.setProperty('--acc', product.design.colorBottom);
-    t.querySelector('span').textContent = '+1 ' + product.name + (who ? ' para ' + who : ' al pedido');
+    t.querySelector('span').textContent = text || ('+1 ' + product.name + (who ? ' para ' + who : ' al pedido'));
     t.classList.add('show');
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1600);
+  }
+
+  /* mientras se confirma el stock en la base */
+  sending(on){
+    const b = el('sendWa');
+    b.disabled = on;
+    b.classList.toggle('busy', on);
+    el('saveOnly').disabled = on;
+    if(on) el('drHint').textContent = 'Confirmando stock…';
+  }
+
+  stockError(msg){
+    const h = el('drHint');
+    h.textContent = msg;
+    h.classList.add('err');
+    setTimeout(function(){ h.classList.remove('err'); }, 6000);
   }
 
   bumpCart(){ bump(el('hcart')); bump(el('barTotal')); }

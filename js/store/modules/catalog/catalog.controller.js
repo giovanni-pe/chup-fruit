@@ -17,10 +17,10 @@ export class CatalogController {
       /* la primera vez aparecen con el scroll; si Supabase trae cambios después, sin animar */
       this.reveal(cards, this.rendered);
       this.rendered = true;
-      this.view.syncQuantities(this.order.activeItems());
+      this.view.syncQuantities(this.order.activeItems(), (id) => this.order.remaining(id));
     });
 
-    this.order.on('change', () => this.view.syncQuantities(this.order.activeItems()));
+    this.order.on('change', () => this.view.syncQuantities(this.order.activeItems(), (id) => this.order.remaining(id)));
 
     this.view.filters.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-f]');

@@ -6,7 +6,7 @@ import { SEED_PRODUCTS } from '../../../shared/catalog/catalog.seed.js';
 /* ---------- Reglas del negocio ---------- */
 export const TEL = '51939617373';
 export const YAPE = '939 617 373';
-export const MIN = 5;                                   // pedido mínimo
+export const DEFAULT_MIN = 5;                           // pedido mínimo si la zona aún no cargó
 export const BILL_VALUES = ['10', '20', '50'];
 const LS_DRAFT = 'chup_borrador';
 
@@ -39,6 +39,7 @@ export function messageFor(o){
   if(o.pin) msg += '\nUbicación: https://maps.google.com/?q=' + o.pin[0].toFixed(6) + ',' + o.pin[1].toFixed(6);
   if(o.outOfZone) msg += '\n⚠️ Fuera de la zona de reparto' + (o.distanceKm ? ' (a ' + o.distanceKm.toFixed(1) + ' km de la tienda)' : '') + ': coordinemos el envío.';
   if(o.note) msg += '\nNota: ' + o.note;
+  if(o.stockUnconfirmed) msg += '\n(Stock sin confirmar: revisen disponibilidad)';
   msg += '\nPago: ' + (payText(o.pay, o.total) || 'Yape al ' + YAPE);
   if(o.pay && o.pay.m === 'yape') msg += '\n(Envío la captura del Yape por aquí)';
   msg += '\n\n¡Gracias!';
@@ -51,6 +52,7 @@ export class OrderModel extends Emitter {
     super();
     this.catalog = deps.catalog;
     this.delivery = deps.delivery;
+    this.repo = deps.repo;                          // registra el pedido y descuenta el stock
     this.st = {mode: 'general', people: [blankPerson()], active: 0, step: 1, addr: '', recv: '', pin: null, note: '',
       pay: {m: '', bill: '', other: ''}};           // m: yape | efectivo; bill: exacto | 10 | 20 | … | otro
     this._loadDraft();
@@ -86,6 +88,36 @@ export class OrderModel extends Emitter {
   _changed(){ this._save(); this.emit('change'); }
 
   /* ----- consultas ----- */
+  /* pedido mínimo configurable en el panel (pestaña Zona) */
+  minOrder(){
+    const m = this.delivery.zone && this.delivery.zone.minOrder;
+    return m >= 1 ? m : DEFAULT_MIN;
+  }
+
+  /* unidades de un sabor sumando a todas las personas (el stock es del pedido completo) */
+  qtyOf(id){
+    return this.st.people.reduce(function(s, p){ return s + (p.items[id] || 0); }, 0);
+  }
+
+  /* cuántas más se pueden agregar de un sabor: Infinity si no tiene control de stock */
+  remaining(id){
+    const f = this.product(id);
+    if(!f) return 0;
+    return f.stock == null ? Infinity : Math.max(0, f.stock - this.qtyOf(id));
+  }
+
+  /* sabores del pedido que piden más de lo que hay */
+  overStock(){
+    const out = [];
+    const ids = new Set();
+    this.st.people.forEach(function(p){ Object.keys(p.items).forEach(function(i){ ids.add(i); }); });
+    ids.forEach((id) => {
+      const f = this.product(id);
+      if(f && f.stock != null && this.qtyOf(id) > f.stock) out.push({product: f, available: f.stock, wanted: this.qtyOf(id)});
+    });
+    return out;
+  }
+
   activeItems(){ return (this.st.people[this.st.active] || this.st.people[0]).items; }
   product(id){ return this.catalog.get(id); }
 
@@ -124,7 +156,12 @@ export class OrderModel extends Emitter {
         const k = st.people.findIndex((p) => !this.sumItems(p.items).units);
         if(k >= 0) return personLabel(st.people[k], k) + ' todavía no tiene sabores: agrégale o quítala.';
       }
-      if(t.units < MIN){ const f = MIN - t.units; return 'Agrega ' + f + (f === 1 ? ' unidad más' : ' unidades más') + ' para el pedido mínimo de ' + MIN + '.'; }
+      const over = this.overStock()[0];
+      if(over) return over.available
+        ? 'De ' + over.product.name + ' solo quedan ' + plural(over.available) + ': quita ' + (over.wanted - over.available) + '.'
+        : over.product.name + ' se agotó: quítalo del pedido.';
+      const min = this.minOrder();
+      if(t.units < min){ const f = min - t.units; return 'Agrega ' + f + (f === 1 ? ' unidad más' : ' unidades más') + ' para el pedido mínimo de ' + min + '.'; }
     }
     if(step === 2){
       if(this.needsPin()) return 'Marca tu ubicación en el mapa o usa tu GPS.';
@@ -157,6 +194,11 @@ export class OrderModel extends Emitter {
     k = k == null ? this.st.active : k;
     const p = this.st.people[k];
     if(!p || !this.product(id)) return false;
+    /* no deja pasar del stock disponible (sumando a todas las personas) */
+    if(delta > 0 && this.remaining(id) < delta){
+      this.emit('limit', this.product(id));
+      return false;
+    }
     const q = Math.max(0, Math.min(99, (p.items[id] || 0) + delta));
     if(q === (p.items[id] || 0)) return false;
     if(q === 0) delete p.items[id]; else p.items[id] = q;
@@ -247,9 +289,42 @@ export class OrderModel extends Emitter {
     };
   }
 
+  /* Registra el pedido en la base y descuenta el stock antes de abrir WhatsApp.
+     -> {ok: true, unconfirmed?} | {ok: false, message} (si faltó stock, el catálogo se actualiza con lo que queda) */
+  async reserve(){
+    const items = [];
+    this.st.people.forEach((p) => {
+      Object.keys(p.items).forEach((id) => { if(this.product(id)) items.push({id: id, q: p.items[id]}); });
+    });
+    let res;
+    try{
+      res = await this.repo.place(items);
+    }catch(err){
+      /* sin conexión con la base no se pierde la venta: el pedido sale marcado para que la tienda revise el stock */
+      console.warn('[pedido] no se pudo registrar el pedido; se envía sin confirmar stock', err);
+      return {ok: true, unconfirmed: true};
+    }
+    if(res && res.ok) return {ok: true};
+    const reason = res && res.reason;
+    if(reason === 'stock'){
+      (res.shortages || []).forEach((s) => this.catalog.setStock(s.id, s.available));
+      const names = (res.shortages || []).map((s) => {
+        const f = this.product(s.id);
+        return (s.name || (f && f.name) || 'Un sabor') + (s.available > 0 ? ' (quedan ' + s.available + ')' : ' (agotado)');
+      });
+      this.go(1);
+      return {ok: false, message: 'Mientras armabas tu pedido se vendieron algunos sabores: ' + names.join(', ') + '. Ajusta las cantidades.'};
+    }
+    if(reason === 'min_order'){
+      this.go(1);
+      return {ok: false, message: 'El pedido mínimo es de ' + plural(res.min) + '.'};
+    }
+    return {ok: false, message: 'No pudimos registrar el pedido. Inténtalo de nuevo o escríbenos por WhatsApp.'};
+  }
+
   /* se vacía el carrito, pero la dirección y el modo quedan para el próximo pedido */
-  finish(send){
-    const o = this.snapshot(send);
+  finish(send, extra){
+    const o = Object.assign(this.snapshot(send), extra || {});
     this.st.people = [blankPerson()]; this.st.active = 0; this.st.note = '';
     this._save();
     this.go(5);

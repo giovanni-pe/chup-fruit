@@ -4,6 +4,23 @@ import { ICON } from '../../ui/icons.js';
 
 const FEATURED = {1: 'Portada 1', 2: 'Portada 2', 3: 'Portada 3'};
 
+/* ISO -> valor de <input type="datetime-local"> en la hora local */
+function toLocalInput(iso){
+  if(!iso) return '';
+  const d = new Date(iso), pad = function(n){ return String(n).padStart(2, '0'); };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function formatDate(iso){
+  return new Date(iso).toLocaleString('es-PE', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+}
+
+function stockBadge(p){
+  if(p.stock == null) return '';
+  return '<span class="badge ' + (p.stock === 0 ? 'out' : p.stock <= 10 ? 'low' : 'stock') + '">' +
+    (p.stock === 0 ? 'Agotado' : 'Stock ' + p.stock) + '</span>';
+}
+
 /* Lista de productos y formulario del editor (pestaña Datos) */
 export class ProductsView {
   constructor(){
@@ -51,7 +68,10 @@ export class ProductsView {
           '<span><span class="tagc">' + esc(cat ? cat.name : 'Sin categoría') + '</span>' + (cat && !cat.isActive ? ' <small class="muted">(oculta)</small>' : '') + '</span>' +
           '<span class="price">' + money(p.price) + '</span>' +
           '<span>' + (p.featuredRank ? '<span class="badge star">' + (FEATURED[p.featuredRank] || 'Portada') + '</span>' : '') +
-            (p.displayMode === 'image' ? '<span class="badge photo">' + (p.primaryImage ? 'Foto' : 'Foto (sin subir)') + '</span>' : '') + '</span>' +
+            (p.displayMode === 'image' ? '<span class="badge photo">' + (p.primaryImage ? 'Foto' : 'Foto (sin subir)') + '</span>' : '') +
+            stockBadge(p) +
+            (p.publishAt && new Date(p.publishAt).getTime() > Date.now() ? '<span class="badge sched" title="Se publica el ' + esc(formatDate(p.publishAt)) + '">Desde ' + esc(formatDate(p.publishAt)) + '</span>' : '') +
+            '</span>' +
           '<label class="switch"><input type="checkbox" data-toggle' + (p.isActive ? ' checked' : '') + ' aria-label="Visible: ' + name + '"><span>' + (p.isActive ? 'Visible' : 'Oculto') + '</span></label>' +
         '</div>' +
         '<div class="acts">' +
@@ -93,6 +113,9 @@ export class ProductsView {
     el('pCategory').value = p.categoryId;
     el('pPrice').value = p.id || p.price ? Number(p.price).toFixed(2) : '';
     el('pDescription').value = p.description;
+    el('pStock').value = p.stock == null ? '' : p.stock;
+    el('pPublishAt').value = toLocalInput(p.publishAt);
+    this.publishHint(el('pPublishAt').value);
     document.querySelectorAll('input[name="pDisplay"]').forEach(function(r){ r.checked = r.value === p.displayMode; });
     el('pFeatured').value = p.featuredRank ? String(p.featuredRank) : '';
     el('pActive').checked = p.isActive;
@@ -116,11 +139,20 @@ export class ProductsView {
       categoryId: el('pCategory').value,
       price: el('pPrice').value,
       description: el('pDescription').value,
+      stock: el('pStock').value.trim(),
+      publishAt: el('pPublishAt').value ? new Date(el('pPublishAt').value).toISOString() : null,
       displayMode: display ? display.value : 'design',
       featuredRank: el('pFeatured').value ? +el('pFeatured').value : null,
       isActive: el('pActive').checked,
       isAdult: el('pAdult').checked
     };
+  }
+
+  publishHint(value){
+    const t = value ? new Date(value).getTime() : 0;
+    el('pPublishHint').textContent = !t ? 'Vacío = se publica de inmediato.'
+      : t > Date.now() ? 'Programado: aparecerá en la tienda el ' + formatDate(new Date(t).toISOString()) + '.'
+      : 'Ya publicado (la fecha pasó).';
   }
 
   setSlug(slug){ el('pSlug').value = slug; }

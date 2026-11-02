@@ -10,6 +10,7 @@ import { SupabaseCatalogRepository, SeedCatalogRepository, CatalogCache } from '
 import { OrderModel } from './modules/order/order.model.js';
 import { OrderView } from './modules/order/order.view.js';
 import { OrderController } from './modules/order/order.controller.js';
+import { SupabaseOrderRepository, LocalOrderRepository } from './modules/order/order.repository.js';
 
 import { HistoryModel } from './modules/history/history.model.js';
 import { HistoryView } from './modules/history/history.view.js';
@@ -34,7 +35,10 @@ const delivery = new DeliveryModel({
   remote: isSupabaseConfigured() ? new SupabaseZoneRepository() : null,
   cache: new ZoneCache()
 });
-const order = new OrderModel({catalog: catalog, delivery: delivery});
+/* el stock solo se descuenta si el catálogo vino de Supabase (el de respaldo no tiene stock) */
+const supabaseOrders = new SupabaseOrderRepository(), localOrders = new LocalOrderRepository();
+const order = new OrderModel({catalog: catalog, delivery: delivery,
+  repo: {place: function(items){ return (catalog.source === 'seed' ? localOrders : supabaseOrders).place(items); }}});
 const history = new HistoryModel();
 
 /* ---------- Controladores (cada uno con su vista) ---------- */

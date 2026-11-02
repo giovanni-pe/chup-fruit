@@ -4,7 +4,7 @@ import { store } from '../../../core/storage.js';
 /* Adaptadores de la zona de reparto: fetch() -> Promise<fila | null> */
 export class SupabaseZoneRepository {
   async fetch(){
-    const rows = await restSelect('delivery_settings', {select: 'zone_name,store_address,store_lat,store_lng,radius_m', id: 'eq.true'});
+    const rows = await restSelect('delivery_settings', {select: 'zone_name,store_address,store_lat,store_lng,radius_m,min_order_units', id: 'eq.true'});
     return rows[0] || null;
   }
 }

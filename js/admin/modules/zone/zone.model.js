@@ -44,12 +44,13 @@ export class ZoneModel extends Emitter {
     this.emit('change', {source: 'load'});
   }
 
-  get dirty(){ return JSON.stringify(this.zone) !== JSON.stringify(this.saved); }
+  get dirty(){ return JSON.stringify(this.zone) !== JSON.stringify(this.saved) || Number.isNaN(this.zone.minOrder); }
 
   validate(){
     const z = this.zone, e = {};
     if(!String(z.name || '').trim()) e.name = 'Escribe el nombre de la zona.';
     if(!String(z.address || '').trim()) e.address = 'Escribe la dirección de la tienda.';
+    if(!(Number.isInteger(z.minOrder) && z.minOrder >= 1 && z.minOrder <= 99)) e.minOrder = 'El pedido mínimo debe ser un número entero entre 1 y 99.';
     if(!(z.radius >= RADIUS_MIN && z.radius <= RADIUS_MAX)) e.radius = 'El radio debe estar entre 200 m y 30 km.';
     if(!(isFinite(z.lat) && z.lat >= -90 && z.lat <= 90)) e.lat = 'Latitud inválida.';
     if(!(isFinite(z.lng) && z.lng >= -180 && z.lng <= 180)) e.lng = 'Longitud inválida.';

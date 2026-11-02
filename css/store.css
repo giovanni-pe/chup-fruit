@@ -704,3 +704,12 @@ button.wa-btn{border:0;cursor:pointer;font-family:"Manrope",sans-serif}
 .counter .pic{width:118px;margin:0 2px}
 .counter .pic.mid{transform:scale(1.14);z-index:2}
 @media(prefers-reduced-motion:reduce){.sk-pop,.sk-line{animation:none}}
+
+/* ---------- Stock ---------- */
+.fcard .stock{display:inline-block;margin:8px 0 0 6px;font-size:12px;font-weight:800;color:var(--mango);background:#fff3e2;padding:4px 10px;border-radius:999px;vertical-align:middle}
+.fcard.soldout .stage{filter:grayscale(.85);opacity:.6}
+.fcard.soldout .stock{color:#fff;background:var(--ink-2)}
+.addbtn:disabled{cursor:not-allowed;background:#c9bfc4;box-shadow:none;transform:none}
+.qty button:disabled{opacity:.4;cursor:not-allowed}
+.hint.err{color:var(--fresa)}
+.wa-btn:disabled{cursor:progress;opacity:.65}

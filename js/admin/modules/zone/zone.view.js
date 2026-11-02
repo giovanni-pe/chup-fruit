@@ -48,6 +48,7 @@ export class ZoneView {
   fill(zone, skip){
     const set = function(id, v){ if(id !== skip && document.activeElement !== el(id)) el(id).value = v; };
     set('zName', zone.name);
+    set('zMinOrder', zone.minOrder);
     set('zAddress', zone.address);
     set('zLat', zone.lat);
     set('zLng', zone.lng);

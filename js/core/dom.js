@@ -24,3 +24,15 @@ export function openExternal(url){
   const w = window.open(url, '_blank');
   if(w) w.opener = null; else location.href = url;
 }
+
+/* Para abrir un enlace después de una espera (p. ej. confirmar stock): la pestaña se abre YA, dentro del
+   clic, para que el navegador no la bloquee; luego se le pone la dirección o se cierra. */
+export function openLater(){
+  let w = null;
+  try{ w = window.open('', '_blank'); }catch(e){ w = null; }
+  if(w){ try{ w.opener = null; w.document.title = 'Abriendo WhatsApp…'; }catch(e){} }
+  return {
+    go: function(url){ if(w && !w.closed) w.location.href = url; else location.href = url; },
+    cancel: function(){ if(w && !w.closed) w.close(); }
+  };
+}

@@ -23,6 +23,7 @@ erDiagram
     float store_lat
     float store_lng
     int radius_m "200 a 30000"
+    int min_order_units "pedido mínimo, 1 a 99"
   }
 
   categories {
@@ -44,6 +45,8 @@ erDiagram
     bool is_adult "licor: +18"
     text display_mode "design | image"
     smallint featured_rank "posición en la portada"
+    int stock "null = sin control"
+    timestamptz publish_at "null = de inmediato"
     int sort_order
     bool is_active
   }
@@ -83,7 +86,8 @@ Reglas que cuida la base (no solo el frontend):
 | Una sola foto principal por producto | índice único parcial + RPC `set_primary_product_image` |
 | No se borra una categoría con productos | FK `on delete restrict` |
 | Cada foto viene de Storage **o** de un enlace | `check (num_nonnulls(storage_path, external_url) = 1)` |
-| El público solo ve lo activo | RLS: productos activos de categorías activas |
+| El público solo ve lo activo y ya publicado | RLS: productos activos, con `publish_at` vencido, de categorías activas |
+| No se vende más de lo que hay | RPC `place_order`: bloquea las filas y descuenta el stock (todo o nada) |
 | Solo los administradores escriben | RLS con `is_admin()` en tablas y en el bucket |
 
 Archivos: [`supabase/migrations/…_catalog_schema.sql`](supabase/migrations/20260930000001_catalog_schema.sql) (esquema, RLS,
@@ -96,6 +100,10 @@ ya tenía la tienda, con sus diseños originales). Ambos se pueden ejecutar más
    1. `supabase/migrations/20260930000001_catalog_schema.sql`
    2. `supabase/migrations/20260930000002_seed_catalog.sql`
    3. `supabase/migrations/20261002000001_delivery_settings.sql` (zona de reparto)
+   4. `supabase/migrations/20261102000001_stock_publish_min_order.sql` (pedido mínimo, stock y fecha de publicación)
+
+   > Ejecuta la 4 **antes** de publicar esta versión: la tienda ya pide las columnas `stock`, `publish_at` y
+   > `min_order_units`; sin ellas Supabase responde error y la tienda cae al catálogo de respaldo.
 
    (Con la CLI: `supabase link --project-ref ecktnooenujqsxfqfidz` y `supabase db push`.)
 2. **Conectar la web.** En `js/core/config.js` pega la clave **publicable** (Project Settings → API Keys →
@@ -161,6 +169,18 @@ js/
 **Zona de reparto:** se configura en el panel (pestaña *Zona*: pin de la tienda, radio, nombre y dirección). Un pedido
 con ubicación fuera del círculo **no se bloquea**: el cliente ve un aviso y el mensaje de WhatsApp indica que hay que
 coordinar el envío (con la distancia a la tienda).
+
+**Pedido mínimo:** se edita en la pestaña *Zona* (1 a 99 unidades; antes era fijo en 5). La tienda lo usa en la barra de
+progreso, en la validación del paso 1 y en los textos de la página; la base lo vuelve a comprobar en `place_order`.
+
+**Stock:** cada producto tiene un stock opcional (vacío = sin control). La tienda muestra «Quedan N» desde 10 unidades,
+«Agotado» en 0, y no deja agregar más de lo disponible. Al pulsar *Guardar y enviar por WhatsApp* se llama a la RPC
+`place_order`, que descuenta el stock de forma atómica; si mientras tanto se vendió, no descuenta nada y el cliente ve
+cuánto queda para ajustar. Si la base no responde, el pedido se envía igual, marcado «Stock sin confirmar». *Solo
+guardar en mis pedidos* no descuenta stock. Para devolver unidades de un pedido anulado, edita el stock en el panel.
+
+**Fecha de publicación:** opcional por producto. Con fecha futura, el producto existe en el panel (marcado «Desde …»)
+pero el público no lo ve hasta esa fecha y hora.
 
 La tienda guarda en `localStorage` la última respuesta buena de Supabase: en las visitas siguientes pinta al instante y
 revalida en segundo plano.

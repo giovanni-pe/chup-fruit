@@ -89,7 +89,7 @@
   <section class="view" id="zoneView" hidden>
     <div class="view-head">
       <div>
-        <h1>Zona de reparto</h1>
+        <h1>Zona de reparto y pedido mínimo</h1>
         <p class="muted">Toca el mapa o arrastra el pin para ubicar la tienda y ajusta el radio. Los pedidos de fuera del círculo llegan igual, marcados para coordinar el envío.</p>
       </div>
     </div>
@@ -102,6 +102,10 @@
         <label class="fld"><span>Dirección de la tienda <em class="req">obligatorio</em></span>
           <input id="zAddress" maxlength="120" placeholder="Ej. Jr. 28 de Marzo 245, Bella Durmiente">
           <small class="err" data-err="address"></small></label>
+        <label class="fld"><span>Pedido mínimo (unidades) <em class="req">obligatorio</em></span>
+          <input id="zMinOrder" type="number" inputmode="numeric" min="1" max="99" step="1">
+          <small class="hint">La tienda no deja enviar pedidos con menos unidades.</small>
+          <small class="err" data-err="minOrder"></small></label>
         <label class="fld range"><span>Radio de reparto <b id="zRadiusOut">1.5 km</b></span>
           <input type="range" id="zRadius" min="200" max="10000" step="100">
           <small class="err" data-err="radius"></small></label>
@@ -152,6 +156,16 @@
             <label class="fld"><span>Precio (S/) <em class="req">obligatorio</em></span>
               <input id="pPrice" type="number" inputmode="decimal" min="0" max="9999" step="0.10">
               <small class="err" data-err="price"></small></label>
+          </div>
+          <div class="fld-row">
+            <label class="fld"><span>Stock (unidades) <em>opcional</em></span>
+              <input id="pStock" type="number" inputmode="numeric" min="0" max="99999" step="1" placeholder="Sin control">
+              <small class="hint">Vacío = sin control de stock. Se descuenta solo con cada pedido enviado por WhatsApp; en 0 sale «Agotado».</small>
+              <small class="err" data-err="stock"></small></label>
+            <label class="fld"><span>Fecha de publicación <em>opcional</em></span>
+              <input id="pPublishAt" type="datetime-local">
+              <small class="hint" id="pPublishHint">Vacío = se publica de inmediato.</small>
+              <small class="err" data-err="publishAt"></small></label>
           </div>
           <label class="fld"><span>Descripción <em>opcional</em></span>
             <textarea id="pDescription" rows="2" maxlength="500" placeholder="Aparece bajo el nombre en la tienda"></textarea>

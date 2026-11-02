@@ -1,5 +1,5 @@
 import { Emitter } from '../../../core/emitter.js';
-import { toCategory, toProduct } from '../../../shared/catalog/catalog.entities.js';
+import { toCategory, toProduct, isPublished } from '../../../shared/catalog/catalog.entities.js';
 
 const bySort = function(a, b){ return (a.sortOrder - b.sortOrder) || a.name.localeCompare(b.name, 'es'); };
 
@@ -54,7 +54,7 @@ export class CatalogModel extends Emitter {
     this.catById = new Map(cats.map(function(c){ return [c.id, c]; }));
     const catById = this.catById;
     this.products = data.products.map(toProduct)
-      .filter(function(p){ return p.isActive && catById.has(p.categoryId); })
+      .filter(function(p){ return p.isActive && isPublished(p) && catById.has(p.categoryId); })
       .sort(bySort);
     const products = this.products;
     /* un filtro sin sabores no sirve: solo categorías con algo que mostrar */
@@ -64,6 +64,17 @@ export class CatalogModel extends Emitter {
     this.ready = true;
     this.emit('change', this);
   }
+
+  /* lo que devolvió la base al intentar un pedido: se corrige el stock en pantalla */
+  setStock(id, n){
+    const p = this.get(id);
+    if(!p || p.stock === n) return;
+    p.stock = n;
+    this.emit('change', this);
+  }
+
+  /* vuelve a leer el catálogo (p. ej. tras un pedido, para ver el stock al día) */
+  refresh(){ if(this.remote) this._revalidate(null); }
 
   get(id){ return this.byId.get(String(id)) || null; }
   has(id){ return this.byId.has(String(id)); }

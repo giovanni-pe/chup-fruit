@@ -87,6 +87,7 @@ export class ProductsController {
     form.querySelector('[data-pane="datos"]').addEventListener('input', (e) => {
       if(e.target.id === 'pName' && !v.slugTouched) v.setSlug(slugify(e.target.value));
       if(e.target.id === 'pSlug') v.slugTouched = true;
+      if(e.target.id === 'pPublishAt') v.publishHint(e.target.value);
       this.designer.updateMeta(this.meta());
     });
     form.querySelector('[data-pane="datos"]').addEventListener('change', () => {
