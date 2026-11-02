@@ -1,10 +1,11 @@
 import { restSelect } from '../../../core/supabase-rest.js';
 import { store } from '../../../core/storage.js';
 
-/* Adaptadores de la zona de reparto: fetch() -> Promise<fila | null> */
+/* Adaptadores de la zona de reparto: fetch() -> Promise<fila | null>
+   select=* para no fallar si la base aún no tiene alguna columna nueva (p. ej. min_order_units) */
 export class SupabaseZoneRepository {
   async fetch(){
-    const rows = await restSelect('delivery_settings', {select: 'zone_name,store_address,store_lat,store_lng,radius_m,min_order_units', id: 'eq.true'});
+    const rows = await restSelect('delivery_settings', {select: '*', id: 'eq.true'});
     return rows[0] || null;
   }
 }

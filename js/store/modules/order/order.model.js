@@ -296,6 +296,8 @@ export class OrderModel extends Emitter {
     this.st.people.forEach((p) => {
       Object.keys(p.items).forEach((id) => { if(this.product(id)) items.push({id: id, q: p.items[id]}); });
     });
+    /* sin sabores con stock controlado no hay nada que descontar */
+    if(!items.some((it) => this.product(it.id).stock != null)) return {ok: true};
     let res;
     try{
       res = await this.repo.place(items);
